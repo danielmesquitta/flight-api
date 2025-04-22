@@ -14,6 +14,7 @@ type Router struct {
 	m  *middleware.Middleware
 	hh *handler.HealthHandler
 	dh *handler.DocHandler
+	fh *handler.FlightHandler
 }
 
 func NewRouter(
@@ -21,12 +22,14 @@ func NewRouter(
 	m *middleware.Middleware,
 	hh *handler.HealthHandler,
 	dh *handler.DocHandler,
+	fh *handler.FlightHandler,
 ) *Router {
 	return &Router{
 		e:  e,
 		m:  m,
 		hh: hh,
 		dh: dh,
+		fh: fh,
 	}
 }
 
@@ -41,5 +44,7 @@ func (r *Router) Register(
 
 	apiV1 := app.Group(basePath + "/v1")
 
-	_ = apiV1
+	usersApiV1 := apiV1.Group("", r.m.BearerAuthAccessToken())
+
+	usersApiV1.Get("/flight/search", r.fh.Search)
 }

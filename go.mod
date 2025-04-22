@@ -15,6 +15,7 @@ require (
 	github.com/spf13/viper v1.20.1
 	github.com/swaggo/fiber-swagger v1.3.0
 	github.com/swaggo/swag v1.16.4
+	resty.dev/v3 v3.0.0-beta.2
 )
 
 require (

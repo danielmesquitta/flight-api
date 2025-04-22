@@ -31,6 +31,8 @@ type Env struct {
 	Port                    string      `mapstructure:"PORT"`
 	RedisDatabaseURL        string      `mapstructure:"REDIS_DATABASE_URL"          validate:"required"`
 	JWTAccessTokenSecretKey string      `mapstructure:"JWT_ACCESS_TOKEN_SECRET_KEY" validate:"required"`
+	AmadeusAPIKey           string      `mapstructure:"AMADEUS_API_KEY"             validate:"required"`
+	AmadeusAPISecret        string      `mapstructure:"AMADEUS_API_SECRET"          validate:"required"`
 }
 
 func NewEnv(v validator.Validator) *Env {
