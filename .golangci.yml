@@ -1,0 +1,11 @@
+version: "2"
+linters:
+  enable:
+    - goconst
+    - unconvert
+    - unparam
+formatters:
+  enable:
+    - gofmt
+    - goimports
+    - golines
