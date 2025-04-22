@@ -1,0 +1,59 @@
+basePath: /api
+definitions:
+  dto.ErrorItem:
+    properties:
+      name:
+        type: string
+      reason:
+        type: string
+    type: object
+  dto.ErrorResponse:
+    properties:
+      errors:
+        items:
+          $ref: '#/definitions/dto.ErrorItem'
+        type: array
+      message:
+        type: string
+    type: object
+  dto.HealthResponse:
+    properties:
+      status:
+        type: string
+    type: object
+info:
+  contact:
+    email: danielmesquitta123@gmail.com
+    name: Daniel Mesquita
+  description: Flight API
+  title: Flight API
+  version: "1.0"
+paths:
+  /health:
+    post:
+      consumes:
+      - application/json
+      description: Health check
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.HealthResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Health check
+      tags:
+      - Health
+securityDefinitions:
+  BasicAuth:
+    type: basic
+  BearerAuth:
+    description: Type "Bearer" followed by a space and JWT token.
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
