@@ -10,6 +10,7 @@ require (
 	github.com/gofiber/contrib/jwt v1.1.0
 	github.com/gofiber/fiber/v2 v2.52.6
 	github.com/golang-jwt/jwt/v5 v5.2.2
+	github.com/google/wire v0.6.0
 	github.com/redis/go-redis/v9 v9.7.3
 	github.com/spf13/viper v1.20.1
 	github.com/swaggo/fiber-swagger v1.3.0
