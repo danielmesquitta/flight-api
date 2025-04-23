@@ -18,26 +18,11 @@ import (
 	"github.com/danielmesquitta/flight-api/internal/provider/flightapi"
 	"github.com/danielmesquitta/flight-api/internal/provider/flightapi/amadeusapi"
 	"github.com/danielmesquitta/flight-api/internal/provider/flightapi/mockflightapi"
+	"github.com/danielmesquitta/flight-api/internal/provider/flightapi/serpapi"
 	"testing"
 )
 
 // Injectors from wire.go:
-
-// NewProd wires up the application in prod mode.
-func NewProd(v validator.Validator, e *env.Env, t *testing.T) *App {
-	jwt := jwtutil.NewJWT(e)
-	middlewareMiddleware := middleware.NewMiddleware(e, jwt)
-	healthHandler := handler.NewHealthHandler()
-	docHandler := handler.NewDocHandler()
-	amadeusAPI := amadeusapi.NewAmadeusAPI(e)
-	v2 := flightapi.NewFlightAPIs(amadeusAPI)
-	searchFlightUseCase := flight.NewSearchFlightUseCase(v, v2)
-	flightHandler := handler.NewFlightHandler(searchFlightUseCase)
-	routerRouter := router.NewRouter(e, middlewareMiddleware, healthHandler, docHandler, flightHandler)
-	redisCache := rediscache.NewRedisCache(e)
-	app := Build(middlewareMiddleware, routerRouter, redisCache)
-	return app
-}
 
 // NewDev wires up the application in dev mode.
 func NewDev(v validator.Validator, e *env.Env, t *testing.T) *App {
@@ -46,7 +31,8 @@ func NewDev(v validator.Validator, e *env.Env, t *testing.T) *App {
 	healthHandler := handler.NewHealthHandler()
 	docHandler := handler.NewDocHandler()
 	amadeusAPI := amadeusapi.NewAmadeusAPI(e)
-	v2 := flightapi.NewFlightAPIs(amadeusAPI)
+	serpAPI := serpapi.NewSerpAPI(e)
+	v2 := flightapi.NewFlightAPIs(amadeusAPI, serpAPI)
 	searchFlightUseCase := flight.NewSearchFlightUseCase(v, v2)
 	flightHandler := handler.NewFlightHandler(searchFlightUseCase)
 	routerRouter := router.NewRouter(e, middlewareMiddleware, healthHandler, docHandler, flightHandler)
@@ -62,7 +48,8 @@ func NewStaging(v validator.Validator, e *env.Env, t *testing.T) *App {
 	healthHandler := handler.NewHealthHandler()
 	docHandler := handler.NewDocHandler()
 	amadeusAPI := amadeusapi.NewAmadeusAPI(e)
-	v2 := flightapi.NewFlightAPIs(amadeusAPI)
+	serpAPI := serpapi.NewSerpAPI(e)
+	v2 := flightapi.NewFlightAPIs(amadeusAPI, serpAPI)
 	searchFlightUseCase := flight.NewSearchFlightUseCase(v, v2)
 	flightHandler := handler.NewFlightHandler(searchFlightUseCase)
 	routerRouter := router.NewRouter(e, middlewareMiddleware, healthHandler, docHandler, flightHandler)
@@ -79,6 +66,23 @@ func NewTest(v validator.Validator, e *env.Env, t *testing.T) *App {
 	docHandler := handler.NewDocHandler()
 	mockFlightAPI := mockflightapi.NewMockFlightAPI(t)
 	v2 := mockflightapi.NewMockFlightAPIs(mockFlightAPI)
+	searchFlightUseCase := flight.NewSearchFlightUseCase(v, v2)
+	flightHandler := handler.NewFlightHandler(searchFlightUseCase)
+	routerRouter := router.NewRouter(e, middlewareMiddleware, healthHandler, docHandler, flightHandler)
+	redisCache := rediscache.NewRedisCache(e)
+	app := Build(middlewareMiddleware, routerRouter, redisCache)
+	return app
+}
+
+// NewProd wires up the application in prod mode.
+func NewProd(v validator.Validator, e *env.Env, t *testing.T) *App {
+	jwt := jwtutil.NewJWT(e)
+	middlewareMiddleware := middleware.NewMiddleware(e, jwt)
+	healthHandler := handler.NewHealthHandler()
+	docHandler := handler.NewDocHandler()
+	amadeusAPI := amadeusapi.NewAmadeusAPI(e)
+	serpAPI := serpapi.NewSerpAPI(e)
+	v2 := flightapi.NewFlightAPIs(amadeusAPI, serpAPI)
 	searchFlightUseCase := flight.NewSearchFlightUseCase(v, v2)
 	flightHandler := handler.NewFlightHandler(searchFlightUseCase)
 	routerRouter := router.NewRouter(e, middlewareMiddleware, healthHandler, docHandler, flightHandler)

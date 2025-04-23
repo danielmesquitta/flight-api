@@ -33,6 +33,7 @@ type Env struct {
 	JWTAccessTokenSecretKey string      `mapstructure:"JWT_ACCESS_TOKEN_SECRET_KEY" validate:"required"`
 	AmadeusAPIKey           string      `mapstructure:"AMADEUS_API_KEY"             validate:"required"`
 	AmadeusAPISecret        string      `mapstructure:"AMADEUS_API_SECRET"          validate:"required"`
+	SerpAPIKey              string      `mapstructure:"SERP_API_KEY"                validate:"required"`
 }
 
 func NewEnv(v validator.Validator) *Env {

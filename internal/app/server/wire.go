@@ -18,33 +18,11 @@ import (
 	"github.com/danielmesquitta/flight-api/internal/provider/flightapi"
 	"github.com/danielmesquitta/flight-api/internal/provider/flightapi/amadeusapi"
 	"github.com/danielmesquitta/flight-api/internal/provider/flightapi/mockflightapi"
+	"github.com/danielmesquitta/flight-api/internal/provider/flightapi/serpapi"
 	"github.com/google/wire"
 	"github.com/stretchr/testify/mock"
 	"testing"
 )
-
-// NewProd wires up the application in prod mode.
-func NewProd(
-	v validator.Validator,
-	e *env.Env,
-	t *testing.T,
-) *App {
-	wire.Build(
-		amadeusapi.NewAmadeusAPI,
-		flightapi.NewFlightAPIs,
-		jwtutil.NewJWT,
-		wire.Bind(new(cache.Cache), new(*rediscache.RedisCache)),
-		rediscache.NewRedisCache,
-		flight.NewSearchFlightUseCase,
-		handler.NewDocHandler,
-		handler.NewHealthHandler,
-		handler.NewFlightHandler,
-		middleware.NewMiddleware,
-		router.NewRouter,
-		Build,
-	)
-	return &App{}
-}
 
 // NewDev wires up the application in dev mode.
 func NewDev(
@@ -54,6 +32,7 @@ func NewDev(
 ) *App {
 	wire.Build(
 		amadeusapi.NewAmadeusAPI,
+		serpapi.NewSerpAPI,
 		flightapi.NewFlightAPIs,
 		jwtutil.NewJWT,
 		wire.Bind(new(cache.Cache), new(*rediscache.RedisCache)),
@@ -77,6 +56,7 @@ func NewStaging(
 ) *App {
 	wire.Build(
 		amadeusapi.NewAmadeusAPI,
+		serpapi.NewSerpAPI,
 		flightapi.NewFlightAPIs,
 		jwtutil.NewJWT,
 		wire.Bind(new(cache.Cache), new(*rediscache.RedisCache)),
@@ -105,6 +85,30 @@ func NewTest(
 		}), new(*testing.T)),
 		mockflightapi.NewMockFlightAPI,
 		mockflightapi.NewMockFlightAPIs,
+		jwtutil.NewJWT,
+		wire.Bind(new(cache.Cache), new(*rediscache.RedisCache)),
+		rediscache.NewRedisCache,
+		flight.NewSearchFlightUseCase,
+		handler.NewDocHandler,
+		handler.NewHealthHandler,
+		handler.NewFlightHandler,
+		middleware.NewMiddleware,
+		router.NewRouter,
+		Build,
+	)
+	return &App{}
+}
+
+// NewProd wires up the application in prod mode.
+func NewProd(
+	v validator.Validator,
+	e *env.Env,
+	t *testing.T,
+) *App {
+	wire.Build(
+		amadeusapi.NewAmadeusAPI,
+		serpapi.NewSerpAPI,
+		flightapi.NewFlightAPIs,
 		jwtutil.NewJWT,
 		wire.Bind(new(cache.Cache), new(*rediscache.RedisCache)),
 		rediscache.NewRedisCache,

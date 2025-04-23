@@ -11,12 +11,12 @@ type AmadeusAPI struct {
 	c *resty.Client
 }
 
-func NewAmadeusAPI(env *env.Env) *AmadeusAPI {
-	client := resty.New().
+func NewAmadeusAPI(e *env.Env) *AmadeusAPI {
+	c := resty.New().
 		SetBaseURL("https://test.api.amadeus.com")
 
 	return &AmadeusAPI{
-		e: env,
-		c: client,
+		e: e,
+		c: c,
 	}
 }

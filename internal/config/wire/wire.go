@@ -19,6 +19,7 @@ import (
 	"github.com/danielmesquitta/flight-api/internal/provider/flightapi"
 	"github.com/danielmesquitta/flight-api/internal/provider/flightapi/amadeusapi"
 	"github.com/danielmesquitta/flight-api/internal/provider/flightapi/mockflightapi"
+	"github.com/danielmesquitta/flight-api/internal/provider/flightapi/serpapi"
 )
 
 func init() {
@@ -58,6 +59,7 @@ var providers = []any{
 
 var devProviders = []any{
 	amadeusapi.NewAmadeusAPI,
+	serpapi.NewSerpAPI,
 	flightapi.NewFlightAPIs,
 }
 
@@ -72,10 +74,12 @@ var testProviders = []any{
 
 var stagingProviders = []any{
 	amadeusapi.NewAmadeusAPI,
+	serpapi.NewSerpAPI,
 	flightapi.NewFlightAPIs,
 }
 
 var prodProviders = []any{
 	amadeusapi.NewAmadeusAPI,
+	serpapi.NewSerpAPI,
 	flightapi.NewFlightAPIs,
 }
