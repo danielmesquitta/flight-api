@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"log/slog"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/danielmesquitta/flight-api/internal/domain/entity"
@@ -78,15 +79,21 @@ func (a *AmadeusAPI) SearchFlights(
 		firstSegment := itinerary.Segments[0]
 		departureAt, err := dateparse.ParseAny(firstSegment.Departure.At)
 		if err != nil {
-      slog.ErrorContext(ctx, "failed to parse departure date", "error", err)
+			slog.ErrorContext(ctx, "failed to parse departure date", "error", err)
 			continue
 		}
 
 		lastSegment := itinerary.Segments[len(itinerary.Segments)-1]
 		arrivalAt, err := dateparse.ParseAny(lastSegment.Arrival.At)
 		if err != nil {
-      slog.ErrorContext(ctx, "failed to parse arrival date", "error", err)
-      continue
+			slog.ErrorContext(ctx, "failed to parse arrival date", "error", err)
+			continue
+		}
+
+		duration, err := a.parseDuration(itinerary.Duration)
+		if err != nil {
+			slog.ErrorContext(ctx, "failed to parse duration", "error", err)
+			continue
 		}
 
 		price, err := strconv.ParseFloat(flight.Price.GrandTotal, 64)
@@ -99,6 +106,7 @@ func (a *AmadeusAPI) SearchFlights(
 			Destination: destination,
 			DepartureAt: departureAt,
 			ArrivalAt:   arrivalAt,
+			Duration:    duration,
 			Price:       int64(price * 100),
 		}
 
@@ -106,4 +114,20 @@ func (a *AmadeusAPI) SearchFlights(
 	}
 
 	return flights, nil
+}
+
+func (a *AmadeusAPI) parseDuration(duration string) (time.Duration, error) {
+	split := strings.Split(duration, "PT")
+	if len(split) != 2 {
+		return 0, errs.New("invalid duration format")
+	}
+
+	durationStr := strings.ToLower(split[1])
+
+	parsedDuration, err := time.ParseDuration(durationStr)
+	if err != nil {
+		return 0, errs.New(err)
+	}
+
+	return parsedDuration, nil
 }
