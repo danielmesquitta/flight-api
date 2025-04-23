@@ -19,7 +19,7 @@ const docTemplate = `{
     "basePath": "{{.BasePath}}",
     "paths": {
         "/health": {
-            "post": {
+            "get": {
                 "description": "Health check",
                 "consumes": [
                     "application/json"
@@ -36,6 +36,76 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/dto.HealthResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/v1/flights/search": {
+            "get": {
+                "description": "Search for flights based on origin, destination, and date",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Flight"
+                ],
+                "summary": "Flight search",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Origin airport code",
+                        "name": "origin",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Destination airport code",
+                        "name": "destination",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Departure date (YYYY-MM-DD)",
+                        "name": "date",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.FlightSearchResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
                         }
                     },
                     "500": {
@@ -74,11 +144,48 @@ const docTemplate = `{
                 }
             }
         },
+        "dto.FlightSearchResponse": {
+            "type": "object",
+            "properties": {
+                "cheapest_flight": {
+                    "$ref": "#/definitions/entity.Flight"
+                },
+                "fastest_flight": {
+                    "$ref": "#/definitions/entity.Flight"
+                },
+                "flights": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.Flight"
+                    }
+                }
+            }
+        },
         "dto.HealthResponse": {
             "type": "object",
             "properties": {
                 "status": {
                     "type": "string"
+                }
+            }
+        },
+        "entity.Flight": {
+            "type": "object",
+            "properties": {
+                "arrival_at": {
+                    "type": "string"
+                },
+                "departure_at": {
+                    "type": "string"
+                },
+                "destination": {
+                    "type": "string"
+                },
+                "origin": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "integer"
                 }
             }
         }

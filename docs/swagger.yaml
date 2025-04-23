@@ -16,10 +16,34 @@ definitions:
       message:
         type: string
     type: object
+  dto.FlightSearchResponse:
+    properties:
+      cheapest_flight:
+        $ref: '#/definitions/entity.Flight'
+      fastest_flight:
+        $ref: '#/definitions/entity.Flight'
+      flights:
+        items:
+          $ref: '#/definitions/entity.Flight'
+        type: array
+    type: object
   dto.HealthResponse:
     properties:
       status:
         type: string
+    type: object
+  entity.Flight:
+    properties:
+      arrival_at:
+        type: string
+      departure_at:
+        type: string
+      destination:
+        type: string
+      origin:
+        type: string
+      price:
+        type: integer
     type: object
 info:
   contact:
@@ -30,7 +54,7 @@ info:
   version: "1.0"
 paths:
   /health:
-    post:
+    get:
       consumes:
       - application/json
       description: Health check
@@ -48,6 +72,53 @@ paths:
       summary: Health check
       tags:
       - Health
+  /v1/flights/search:
+    get:
+      consumes:
+      - application/json
+      description: Search for flights based on origin, destination, and date
+      parameters:
+      - description: Origin airport code
+        in: query
+        name: origin
+        required: true
+        type: string
+      - description: Destination airport code
+        in: query
+        name: destination
+        required: true
+        type: string
+      - description: Departure date (YYYY-MM-DD)
+        in: query
+        name: date
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/dto.FlightSearchResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/dto.ErrorResponse'
+      summary: Flight search
+      tags:
+      - Flight
 securityDefinitions:
   BasicAuth:
     type: basic

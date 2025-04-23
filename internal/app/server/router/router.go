@@ -44,7 +44,10 @@ func (r *Router) Register(
 
 	apiV1 := app.Group(basePath + "/v1")
 
-	usersApiV1 := apiV1.Group("", r.m.BearerAuthAccessToken())
+	usersApiV1 := apiV1.Group(
+		"",
+		// r.m.BearerAuthAccessToken(),
+	)
 
-	usersApiV1.Get("/flight/search", r.fh.Search)
+	usersApiV1.Get("/flights/search", r.fh.Search)
 }

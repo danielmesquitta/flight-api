@@ -28,15 +28,15 @@ func NewSearchFlightUseCase(
 }
 
 type SearchFlightUseCaseInput struct {
-	Origin      string `json:"origin"      validate:"required,length=3"`
-	Destination string `json:"destination" validate:"required,length=3"`
-	Date        string `json:"date"        validate:"required,date=2006-01-02"`
+	Origin      string    `json:"origin"      validate:"required,len=3"`
+	Destination string    `json:"destination" validate:"required,len=3"`
+	Date        time.Time `json:"date"        validate:"required"`
 }
 
 type SearchFlightUseCaseOutput struct {
-	CheapestFlight  *entity.Flight  `json:"cheapest_flight,omitzero"`
-	FastestFlight   *entity.Flight  `json:"fastest_flight,omitzero"`
-	PriceComparison []entity.Flight `json:"price_comparison,omitzero"`
+	CheapestFlight *entity.Flight  `json:"cheapest_flight,omitzero"`
+	FastestFlight  *entity.Flight  `json:"fastest_flight,omitzero"`
+	Flights        []entity.Flight `json:"flights,omitzero"`
 }
 
 func (s *SearchFlightUseCase) Execute(
@@ -47,20 +47,15 @@ func (s *SearchFlightUseCase) Execute(
 		return nil, errs.New(err)
 	}
 
-	parsedDate, err := time.Parse(time.DateOnly, in.Date)
-	if err != nil {
-		return nil, errs.New(err)
-	}
-
 	allFlights := []entity.Flight{}
 	g := errgroup.Group{}
 	for _, api := range s.f {
 		g.Go(func() error {
-			flights, err := api.GetFlightDetails(
+			flights, err := api.SearchFlights(
 				ctx,
 				in.Origin,
 				in.Destination,
-				parsedDate,
+				in.Date,
 			)
 			if err != nil {
 				return err
@@ -83,22 +78,23 @@ func (s *SearchFlightUseCase) Execute(
 	}
 
 	var cheapest, fastest *entity.Flight
-	for _, flight := range allFlights {
+	for i := range allFlights {
+		flight := &allFlights[i]
+
 		if cheapest == nil || flight.Price < cheapest.Price {
-			cheapest = &flight
+			cheapest = flight
 		}
 
 		duration := flight.ArrivalAt.Sub(flight.DepartureAt)
-		cmpDuration := fastest.ArrivalAt.Sub(fastest.DepartureAt)
-		if fastest == nil || duration < cmpDuration {
-			fastest = &flight
+		if fastest == nil || duration < fastest.ArrivalAt.Sub(fastest.DepartureAt) {
+			fastest = flight
 		}
 	}
 
 	out := SearchFlightUseCaseOutput{
-		CheapestFlight:  cheapest,
-		FastestFlight:   fastest,
-		PriceComparison: allFlights,
+		CheapestFlight: cheapest,
+		FastestFlight:  fastest,
+		Flights:        allFlights,
 	}
 
 	return &out, nil

@@ -1,0 +1,16 @@
+all: false
+dir: "{{.InterfaceDir}}/mock{{.SrcPackageName}}"
+filename: mock{{.SrcPackageName}}_gen.go
+force-file-write: true
+formatter: goimports
+log-level: error
+structname: "{{.Mock}}{{.InterfaceName}}"
+pkgname: "mock{{.SrcPackageName}}"
+recursive: false
+require-template-schema-exists: true
+template: testify
+template-schema: "{{.Template}}.schema.json"
+packages:
+  github.com/danielmesquitta/flight-api/internal/provider/flightapi:
+    config:
+      all: true

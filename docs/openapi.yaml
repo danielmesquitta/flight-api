@@ -16,10 +16,34 @@ components:
                 message:
                     type: string
             type: object
+        dto.FlightSearchResponse:
+            properties:
+                cheapest_flight:
+                    $ref: '#/components/schemas/entity.Flight'
+                fastest_flight:
+                    $ref: '#/components/schemas/entity.Flight'
+                flights:
+                    items:
+                        $ref: '#/components/schemas/entity.Flight'
+                    type: array
+            type: object
         dto.HealthResponse:
             properties:
                 status:
                     type: string
+            type: object
+        entity.Flight:
+            properties:
+                arrival_at:
+                    type: string
+                departure_at:
+                    type: string
+                destination:
+                    type: string
+                origin:
+                    type: string
+                price:
+                    type: integer
             type: object
     securitySchemes:
         BasicAuth:
@@ -40,7 +64,7 @@ info:
 openapi: 3.0.3
 paths:
     /health:
-        post:
+        get:
             description: Health check
             responses:
                 "200":
@@ -58,3 +82,59 @@ paths:
             summary: Health check
             tags:
                 - Health
+    /v1/flights/search:
+        get:
+            description: Search for flights based on origin, destination, and date
+            parameters:
+                - description: Origin airport code
+                  in: query
+                  name: origin
+                  required: true
+                  schema:
+                    type: string
+                - description: Destination airport code
+                  in: query
+                  name: destination
+                  required: true
+                  schema:
+                    type: string
+                - description: Departure date (YYYY-MM-DD)
+                  in: query
+                  name: date
+                  required: true
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/dto.FlightSearchResponse'
+                    description: OK
+                "400":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/dto.ErrorResponse'
+                    description: Bad Request
+                "401":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/dto.ErrorResponse'
+                    description: Unauthorized
+                "404":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/dto.ErrorResponse'
+                    description: Not Found
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/dto.ErrorResponse'
+                    description: Internal Server Error
+            summary: Flight search
+            tags:
+                - Flight

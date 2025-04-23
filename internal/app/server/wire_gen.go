@@ -11,25 +11,17 @@ import (
 	"github.com/danielmesquitta/flight-api/internal/app/server/middleware"
 	"github.com/danielmesquitta/flight-api/internal/app/server/router"
 	"github.com/danielmesquitta/flight-api/internal/config/env"
+	"github.com/danielmesquitta/flight-api/internal/domain/usecase/flight"
 	"github.com/danielmesquitta/flight-api/internal/pkg/jwtutil"
 	"github.com/danielmesquitta/flight-api/internal/pkg/validator"
 	"github.com/danielmesquitta/flight-api/internal/provider/cache/rediscache"
+	"github.com/danielmesquitta/flight-api/internal/provider/flightapi"
+	"github.com/danielmesquitta/flight-api/internal/provider/flightapi/amadeusapi"
+	"github.com/danielmesquitta/flight-api/internal/provider/flightapi/mockflightapi"
 	"testing"
 )
 
 // Injectors from wire.go:
-
-// NewProd wires up the application in prod mode.
-func NewProd(v validator.Validator, e *env.Env, t *testing.T) *App {
-	jwt := jwtutil.NewJWT(e)
-	middlewareMiddleware := middleware.NewMiddleware(e, jwt)
-	healthHandler := handler.NewHealthHandler()
-	docHandler := handler.NewDocHandler()
-	routerRouter := router.NewRouter(e, middlewareMiddleware, healthHandler, docHandler)
-	redisCache := rediscache.NewRedisCache(e)
-	app := Build(middlewareMiddleware, routerRouter, redisCache)
-	return app
-}
 
 // NewDev wires up the application in dev mode.
 func NewDev(v validator.Validator, e *env.Env, t *testing.T) *App {
@@ -37,7 +29,11 @@ func NewDev(v validator.Validator, e *env.Env, t *testing.T) *App {
 	middlewareMiddleware := middleware.NewMiddleware(e, jwt)
 	healthHandler := handler.NewHealthHandler()
 	docHandler := handler.NewDocHandler()
-	routerRouter := router.NewRouter(e, middlewareMiddleware, healthHandler, docHandler)
+	amadeusAPI := amadeusapi.NewAmadeusAPI(e)
+	v2 := flightapi.NewFlightAPIs(amadeusAPI)
+	searchFlightUseCase := flight.NewSearchFlightUseCase(v, v2)
+	flightHandler := handler.NewFlightHandler(searchFlightUseCase)
+	routerRouter := router.NewRouter(e, middlewareMiddleware, healthHandler, docHandler, flightHandler)
 	redisCache := rediscache.NewRedisCache(e)
 	app := Build(middlewareMiddleware, routerRouter, redisCache)
 	return app
@@ -49,7 +45,11 @@ func NewStaging(v validator.Validator, e *env.Env, t *testing.T) *App {
 	middlewareMiddleware := middleware.NewMiddleware(e, jwt)
 	healthHandler := handler.NewHealthHandler()
 	docHandler := handler.NewDocHandler()
-	routerRouter := router.NewRouter(e, middlewareMiddleware, healthHandler, docHandler)
+	amadeusAPI := amadeusapi.NewAmadeusAPI(e)
+	v2 := flightapi.NewFlightAPIs(amadeusAPI)
+	searchFlightUseCase := flight.NewSearchFlightUseCase(v, v2)
+	flightHandler := handler.NewFlightHandler(searchFlightUseCase)
+	routerRouter := router.NewRouter(e, middlewareMiddleware, healthHandler, docHandler, flightHandler)
 	redisCache := rediscache.NewRedisCache(e)
 	app := Build(middlewareMiddleware, routerRouter, redisCache)
 	return app
@@ -61,7 +61,27 @@ func NewTest(v validator.Validator, e *env.Env, t *testing.T) *App {
 	middlewareMiddleware := middleware.NewMiddleware(e, jwt)
 	healthHandler := handler.NewHealthHandler()
 	docHandler := handler.NewDocHandler()
-	routerRouter := router.NewRouter(e, middlewareMiddleware, healthHandler, docHandler)
+	mockFlightAPI := mockflightapi.NewMockFlightAPI(t)
+	v2 := mockflightapi.NewMockFlightAPIs(mockFlightAPI)
+	searchFlightUseCase := flight.NewSearchFlightUseCase(v, v2)
+	flightHandler := handler.NewFlightHandler(searchFlightUseCase)
+	routerRouter := router.NewRouter(e, middlewareMiddleware, healthHandler, docHandler, flightHandler)
+	redisCache := rediscache.NewRedisCache(e)
+	app := Build(middlewareMiddleware, routerRouter, redisCache)
+	return app
+}
+
+// NewProd wires up the application in prod mode.
+func NewProd(v validator.Validator, e *env.Env, t *testing.T) *App {
+	jwt := jwtutil.NewJWT(e)
+	middlewareMiddleware := middleware.NewMiddleware(e, jwt)
+	healthHandler := handler.NewHealthHandler()
+	docHandler := handler.NewDocHandler()
+	amadeusAPI := amadeusapi.NewAmadeusAPI(e)
+	v2 := flightapi.NewFlightAPIs(amadeusAPI)
+	searchFlightUseCase := flight.NewSearchFlightUseCase(v, v2)
+	flightHandler := handler.NewFlightHandler(searchFlightUseCase)
+	routerRouter := router.NewRouter(e, middlewareMiddleware, healthHandler, docHandler, flightHandler)
 	redisCache := rediscache.NewRedisCache(e)
 	app := Build(middlewareMiddleware, routerRouter, redisCache)
 	return app

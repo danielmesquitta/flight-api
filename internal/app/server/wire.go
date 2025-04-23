@@ -10,33 +10,18 @@ import (
 	"github.com/danielmesquitta/flight-api/internal/app/server/middleware"
 	"github.com/danielmesquitta/flight-api/internal/app/server/router"
 	"github.com/danielmesquitta/flight-api/internal/config/env"
+	"github.com/danielmesquitta/flight-api/internal/domain/usecase/flight"
 	"github.com/danielmesquitta/flight-api/internal/pkg/jwtutil"
 	"github.com/danielmesquitta/flight-api/internal/pkg/validator"
 	"github.com/danielmesquitta/flight-api/internal/provider/cache"
 	"github.com/danielmesquitta/flight-api/internal/provider/cache/rediscache"
+	"github.com/danielmesquitta/flight-api/internal/provider/flightapi"
+	"github.com/danielmesquitta/flight-api/internal/provider/flightapi/amadeusapi"
+	"github.com/danielmesquitta/flight-api/internal/provider/flightapi/mockflightapi"
 	"github.com/google/wire"
+	"github.com/stretchr/testify/mock"
 	"testing"
 )
-
-// NewProd wires up the application in prod mode.
-func NewProd(
-	v validator.Validator,
-	e *env.Env,
-	t *testing.T,
-) *App {
-	wire.Build(
-		// Specific prod providers
-		jwtutil.NewJWT,
-		wire.Bind(new(cache.Cache), new(*rediscache.RedisCache)),
-		rediscache.NewRedisCache,
-		handler.NewDocHandler,
-		handler.NewHealthHandler,
-		middleware.NewMiddleware,
-		router.NewRouter,
-		Build,
-	)
-	return &App{}
-}
 
 // NewDev wires up the application in dev mode.
 func NewDev(
@@ -45,12 +30,15 @@ func NewDev(
 	t *testing.T,
 ) *App {
 	wire.Build(
-		// Specific dev providers
+		amadeusapi.NewAmadeusAPI,
+		flightapi.NewFlightAPIs,
 		jwtutil.NewJWT,
 		wire.Bind(new(cache.Cache), new(*rediscache.RedisCache)),
 		rediscache.NewRedisCache,
+		flight.NewSearchFlightUseCase,
 		handler.NewDocHandler,
 		handler.NewHealthHandler,
+		handler.NewFlightHandler,
 		middleware.NewMiddleware,
 		router.NewRouter,
 		Build,
@@ -65,12 +53,15 @@ func NewStaging(
 	t *testing.T,
 ) *App {
 	wire.Build(
-		// Specific staging providers
+		amadeusapi.NewAmadeusAPI,
+		flightapi.NewFlightAPIs,
 		jwtutil.NewJWT,
 		wire.Bind(new(cache.Cache), new(*rediscache.RedisCache)),
 		rediscache.NewRedisCache,
+		flight.NewSearchFlightUseCase,
 		handler.NewDocHandler,
 		handler.NewHealthHandler,
+		handler.NewFlightHandler,
 		middleware.NewMiddleware,
 		router.NewRouter,
 		Build,
@@ -85,12 +76,42 @@ func NewTest(
 	t *testing.T,
 ) *App {
 	wire.Build(
-		// Specific test providers
+		wire.Bind(new(interface {
+			mock.TestingT
+			Cleanup(func())
+		}), new(*testing.T)),
+		mockflightapi.NewMockFlightAPI,
+		mockflightapi.NewMockFlightAPIs,
 		jwtutil.NewJWT,
 		wire.Bind(new(cache.Cache), new(*rediscache.RedisCache)),
 		rediscache.NewRedisCache,
+		flight.NewSearchFlightUseCase,
 		handler.NewDocHandler,
 		handler.NewHealthHandler,
+		handler.NewFlightHandler,
+		middleware.NewMiddleware,
+		router.NewRouter,
+		Build,
+	)
+	return &App{}
+}
+
+// NewProd wires up the application in prod mode.
+func NewProd(
+	v validator.Validator,
+	e *env.Env,
+	t *testing.T,
+) *App {
+	wire.Build(
+		amadeusapi.NewAmadeusAPI,
+		flightapi.NewFlightAPIs,
+		jwtutil.NewJWT,
+		wire.Bind(new(cache.Cache), new(*rediscache.RedisCache)),
+		rediscache.NewRedisCache,
+		flight.NewSearchFlightUseCase,
+		handler.NewDocHandler,
+		handler.NewHealthHandler,
+		handler.NewFlightHandler,
 		middleware.NewMiddleware,
 		router.NewRouter,
 		Build,

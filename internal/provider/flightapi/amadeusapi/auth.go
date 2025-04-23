@@ -10,11 +10,6 @@ import (
 	"github.com/danielmesquitta/flight-api/internal/domain/errs"
 )
 
-type authResponse struct {
-	AccessToken string `json:"access_token" validate:"required"`
-	ExpiresIn   int64  `json:"expires_in"   validate:"required,min=1"`
-}
-
 const authHeaderKey = "Authorization"
 const authExpiresAtKey = "Expires-At"
 
@@ -59,7 +54,11 @@ func (a *AmadeusAPI) authenticate(ctx context.Context) error {
 		return errs.New(string(body))
 	}
 
-	data := authResponse{}
+	type AuthResponse struct {
+		AccessToken string `json:"access_token" validate:"required"`
+		ExpiresIn   int64  `json:"expires_in"   validate:"required,min=1"`
+	}
+	data := AuthResponse{}
 	if err := json.Unmarshal(body, &data); err != nil {
 		return errs.New(err)
 	}
@@ -68,7 +67,7 @@ func (a *AmadeusAPI) authenticate(ctx context.Context) error {
 		return errs.New("access token is empty")
 	}
 
-	a.c.SetHeader(authHeaderKey, data.AccessToken)
+	a.c.SetHeader(authHeaderKey, "Bearer "+data.AccessToken)
 
 	expiresAt := time.Now().Add(time.Duration(data.ExpiresIn) * time.Second)
 	a.c.SetHeader(authExpiresAtKey, fmt.Sprintf("%d", expiresAt.Unix()))

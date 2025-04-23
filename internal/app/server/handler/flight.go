@@ -36,7 +36,11 @@ func NewFlightHandler(
 func (h *FlightHandler) Search(c *fiber.Ctx) error {
 	origin := c.Query(QueryParamOrigin)
 	destination := c.Query(QueryParamDestination)
-	date := c.Query(QueryParamDate)
+
+	date, err := parseDateQueryParam(c, QueryParamDate)
+	if err != nil {
+		return errs.New(err)
+	}
 
 	in := flight.SearchFlightUseCaseInput{
 		Origin:      origin,
