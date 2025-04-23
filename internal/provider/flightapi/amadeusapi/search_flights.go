@@ -106,7 +106,7 @@ func (a *AmadeusAPI) SearchFlights(
 			Destination: destination,
 			DepartureAt: departureAt,
 			ArrivalAt:   arrivalAt,
-			Duration:    duration,
+			Duration:    int64(duration),
 			Price:       int64(price * 100),
 		}
 

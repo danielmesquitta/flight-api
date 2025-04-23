@@ -2,6 +2,8 @@ package rediscache
 
 import (
 	"context"
+	"encoding/json"
+	"strconv"
 	"time"
 
 	"github.com/redis/go-redis/v9"
@@ -36,19 +38,55 @@ func NewRedisCache(
 
 func (r *RedisCache) Scan(
 	ctx context.Context,
-	key cache.Key,
+	key string,
 	value any,
 ) (bool, error) {
 	strCmd := r.c.Get(ctx, key)
 	if strCmd.Err() == redis.Nil {
 		return false, nil
 	}
-	if strCmd.Err() != nil {
-		return false, strCmd.Err()
+	if err := strCmd.Err(); err != nil {
+		return false, err
 	}
 
-	if err := strCmd.Scan(value); err != nil {
+	raw, err := strCmd.Result()
+	if err != nil {
 		return false, err
+	}
+
+	switch v := value.(type) {
+	case *string:
+		*v = raw
+	case *[]byte:
+		*v = []byte(raw)
+	case *int:
+		i, err := strconv.Atoi(raw)
+		if err != nil {
+			return false, err
+		}
+		*v = i
+	case *int64:
+		i, err := strconv.ParseInt(raw, 10, 64)
+		if err != nil {
+			return false, err
+		}
+		*v = i
+	case *float64:
+		f, err := strconv.ParseFloat(raw, 64)
+		if err != nil {
+			return false, err
+		}
+		*v = f
+	case *bool:
+		b, err := strconv.ParseBool(raw)
+		if err != nil {
+			return false, err
+		}
+		*v = b
+	default:
+		if err := json.Unmarshal([]byte(raw), value); err != nil {
+			return false, err
+		}
 	}
 
 	return true, nil
@@ -56,16 +94,29 @@ func (r *RedisCache) Scan(
 
 func (r *RedisCache) Set(
 	ctx context.Context,
-	key cache.Key,
+	key string,
 	value any,
 	expiration time.Duration,
 ) error {
-	return r.c.Set(ctx, key, value, expiration).Err()
+	var data any
+
+	switch v := value.(type) {
+	case string, []byte, int, int64, float64, bool:
+		data = v
+	default:
+		b, err := json.Marshal(value)
+		if err != nil {
+			return err
+		}
+		data = b
+	}
+
+	return r.c.Set(ctx, key, data, expiration).Err()
 }
 
 func (r *RedisCache) Delete(
 	ctx context.Context,
-	keys ...cache.Key,
+	keys ...string,
 ) error {
 	ks := make([]string, len(keys))
 	copy(ks, keys)

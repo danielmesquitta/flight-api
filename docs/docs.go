@@ -181,6 +181,9 @@ const docTemplate = `{
                 "destination": {
                     "type": "string"
                 },
+                "duration": {
+                    "type": "integer"
+                },
                 "origin": {
                     "type": "string"
                 },

@@ -24,52 +24,18 @@ import (
 
 // Injectors from wire.go:
 
-// NewDev wires up the application in dev mode.
-func NewDev(v validator.Validator, e *env.Env, t *testing.T) *App {
-	jwt := jwtutil.NewJWT(e)
-	middlewareMiddleware := middleware.NewMiddleware(e, jwt)
-	healthHandler := handler.NewHealthHandler()
-	docHandler := handler.NewDocHandler()
-	amadeusAPI := amadeusapi.NewAmadeusAPI(e)
-	serpAPI := serpapi.NewSerpAPI(e)
-	v2 := flightapi.NewFlightAPIs(amadeusAPI, serpAPI)
-	searchFlightUseCase := flight.NewSearchFlightUseCase(v, v2)
-	flightHandler := handler.NewFlightHandler(searchFlightUseCase)
-	routerRouter := router.NewRouter(e, middlewareMiddleware, healthHandler, docHandler, flightHandler)
-	redisCache := rediscache.NewRedisCache(e)
-	app := Build(middlewareMiddleware, routerRouter, redisCache)
-	return app
-}
-
-// NewStaging wires up the application in staging mode.
-func NewStaging(v validator.Validator, e *env.Env, t *testing.T) *App {
-	jwt := jwtutil.NewJWT(e)
-	middlewareMiddleware := middleware.NewMiddleware(e, jwt)
-	healthHandler := handler.NewHealthHandler()
-	docHandler := handler.NewDocHandler()
-	amadeusAPI := amadeusapi.NewAmadeusAPI(e)
-	serpAPI := serpapi.NewSerpAPI(e)
-	v2 := flightapi.NewFlightAPIs(amadeusAPI, serpAPI)
-	searchFlightUseCase := flight.NewSearchFlightUseCase(v, v2)
-	flightHandler := handler.NewFlightHandler(searchFlightUseCase)
-	routerRouter := router.NewRouter(e, middlewareMiddleware, healthHandler, docHandler, flightHandler)
-	redisCache := rediscache.NewRedisCache(e)
-	app := Build(middlewareMiddleware, routerRouter, redisCache)
-	return app
-}
-
 // NewTest wires up the application in test mode.
 func NewTest(v validator.Validator, e *env.Env, t *testing.T) *App {
 	jwt := jwtutil.NewJWT(e)
 	middlewareMiddleware := middleware.NewMiddleware(e, jwt)
 	healthHandler := handler.NewHealthHandler()
 	docHandler := handler.NewDocHandler()
+	redisCache := rediscache.NewRedisCache(e)
 	mockFlightAPI := mockflightapi.NewMockFlightAPI(t)
 	v2 := mockflightapi.NewMockFlightAPIs(mockFlightAPI)
-	searchFlightUseCase := flight.NewSearchFlightUseCase(v, v2)
+	searchFlightUseCase := flight.NewSearchFlightUseCase(v, redisCache, v2)
 	flightHandler := handler.NewFlightHandler(searchFlightUseCase)
 	routerRouter := router.NewRouter(e, middlewareMiddleware, healthHandler, docHandler, flightHandler)
-	redisCache := rediscache.NewRedisCache(e)
 	app := Build(middlewareMiddleware, routerRouter, redisCache)
 	return app
 }
@@ -80,13 +46,47 @@ func NewProd(v validator.Validator, e *env.Env, t *testing.T) *App {
 	middlewareMiddleware := middleware.NewMiddleware(e, jwt)
 	healthHandler := handler.NewHealthHandler()
 	docHandler := handler.NewDocHandler()
+	redisCache := rediscache.NewRedisCache(e)
 	amadeusAPI := amadeusapi.NewAmadeusAPI(e)
 	serpAPI := serpapi.NewSerpAPI(e)
 	v2 := flightapi.NewFlightAPIs(amadeusAPI, serpAPI)
-	searchFlightUseCase := flight.NewSearchFlightUseCase(v, v2)
+	searchFlightUseCase := flight.NewSearchFlightUseCase(v, redisCache, v2)
 	flightHandler := handler.NewFlightHandler(searchFlightUseCase)
 	routerRouter := router.NewRouter(e, middlewareMiddleware, healthHandler, docHandler, flightHandler)
+	app := Build(middlewareMiddleware, routerRouter, redisCache)
+	return app
+}
+
+// NewDev wires up the application in dev mode.
+func NewDev(v validator.Validator, e *env.Env, t *testing.T) *App {
+	jwt := jwtutil.NewJWT(e)
+	middlewareMiddleware := middleware.NewMiddleware(e, jwt)
+	healthHandler := handler.NewHealthHandler()
+	docHandler := handler.NewDocHandler()
 	redisCache := rediscache.NewRedisCache(e)
+	amadeusAPI := amadeusapi.NewAmadeusAPI(e)
+	serpAPI := serpapi.NewSerpAPI(e)
+	v2 := flightapi.NewFlightAPIs(amadeusAPI, serpAPI)
+	searchFlightUseCase := flight.NewSearchFlightUseCase(v, redisCache, v2)
+	flightHandler := handler.NewFlightHandler(searchFlightUseCase)
+	routerRouter := router.NewRouter(e, middlewareMiddleware, healthHandler, docHandler, flightHandler)
+	app := Build(middlewareMiddleware, routerRouter, redisCache)
+	return app
+}
+
+// NewStaging wires up the application in staging mode.
+func NewStaging(v validator.Validator, e *env.Env, t *testing.T) *App {
+	jwt := jwtutil.NewJWT(e)
+	middlewareMiddleware := middleware.NewMiddleware(e, jwt)
+	healthHandler := handler.NewHealthHandler()
+	docHandler := handler.NewDocHandler()
+	redisCache := rediscache.NewRedisCache(e)
+	amadeusAPI := amadeusapi.NewAmadeusAPI(e)
+	serpAPI := serpapi.NewSerpAPI(e)
+	v2 := flightapi.NewFlightAPIs(amadeusAPI, serpAPI)
+	searchFlightUseCase := flight.NewSearchFlightUseCase(v, redisCache, v2)
+	flightHandler := handler.NewFlightHandler(searchFlightUseCase)
+	routerRouter := router.NewRouter(e, middlewareMiddleware, healthHandler, docHandler, flightHandler)
 	app := Build(middlewareMiddleware, routerRouter, redisCache)
 	return app
 }

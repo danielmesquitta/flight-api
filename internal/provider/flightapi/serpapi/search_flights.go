@@ -3,7 +3,6 @@ package serpapi
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"log/slog"
 	"time"
 
@@ -77,18 +76,14 @@ func (a *SerpAPI) SearchFlights(
 			continue
 		}
 
-		duration, err := time.ParseDuration(fmt.Sprintf("%dm", flight.TotalDuration))
-		if err != nil {
-			slog.ErrorContext(ctx, "failed to parse duration", "error", err)
-			continue
-		}
+		duration := time.Duration(flight.TotalDuration) * time.Minute
 
 		flightData := entity.Flight{
 			Origin:      origin,
 			Destination: destination,
 			DepartureAt: departureAt,
 			ArrivalAt:   arrivalAt,
-			Duration:    duration,
+			Duration:    int64(duration),
 			Price:       int64(flight.Price * 100),
 		}
 

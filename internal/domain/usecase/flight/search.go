@@ -8,21 +8,25 @@ import (
 	"github.com/danielmesquitta/flight-api/internal/domain/entity"
 	"github.com/danielmesquitta/flight-api/internal/domain/errs"
 	"github.com/danielmesquitta/flight-api/internal/pkg/validator"
+	"github.com/danielmesquitta/flight-api/internal/provider/cache"
 	"github.com/danielmesquitta/flight-api/internal/provider/flightapi"
 	"golang.org/x/sync/errgroup"
 )
 
 type SearchFlightUseCase struct {
 	v validator.Validator
+	c cache.Cache
 	f []flightapi.FlightAPI
 }
 
 func NewSearchFlightUseCase(
 	v validator.Validator,
+	c cache.Cache,
 	f []flightapi.FlightAPI,
 ) *SearchFlightUseCase {
 	return &SearchFlightUseCase{
 		v: v,
+		c: c,
 		f: f,
 	}
 }
@@ -45,6 +49,21 @@ func (s *SearchFlightUseCase) Execute(
 ) (*SearchFlightUseCaseOutput, error) {
 	if err := s.v.Validate(in); err != nil {
 		return nil, errs.New(err)
+	}
+
+	cacheKey := in.Origin + "_" + in.Destination + "_" + in.Date.Format(time.DateOnly)
+
+	out := &SearchFlightUseCaseOutput{}
+	ok, err := s.c.Scan(ctx, cacheKey, out)
+	if err != nil {
+		slog.ErrorContext(
+			ctx,
+			"failed to scan cache for search flight use case",
+			"error", err,
+		)
+	}
+	if ok {
+		return out, nil
 	}
 
 	allFlights := []entity.Flight{}
@@ -91,11 +110,19 @@ func (s *SearchFlightUseCase) Execute(
 		}
 	}
 
-	out := SearchFlightUseCaseOutput{
+	out = &SearchFlightUseCaseOutput{
 		CheapestFlight: cheapest,
 		FastestFlight:  fastest,
 		Flights:        allFlights,
 	}
 
-	return &out, nil
+	if err := s.c.Set(ctx, cacheKey, out, time.Second*30); err != nil {
+		slog.ErrorContext(
+			ctx,
+			"failed to set cache for search flight use case",
+			"error", err,
+		)
+	}
+
+	return out, nil
 }
