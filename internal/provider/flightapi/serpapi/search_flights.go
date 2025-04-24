@@ -83,7 +83,7 @@ func (a *SerpAPI) SearchFlights(
 
 		id := fmt.Sprintf(
 			"serp-%s",
-			strings.Replace(strings.ToLower(firstSegment.FlightNumber), " ", "-", -1),
+			strings.ReplaceAll(strings.ToLower(firstSegment.FlightNumber), " ", "-"),
 		)
 
 		flightData := entity.Flight{

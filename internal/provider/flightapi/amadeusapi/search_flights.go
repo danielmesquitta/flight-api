@@ -108,7 +108,7 @@ func (a *AmadeusAPI) SearchFlights(
 
 		id := fmt.Sprintf(
 			"amadeus-%s",
-			strings.Replace(strings.ToLower(flightNumber), " ", "-", -1),
+			strings.ReplaceAll(strings.ToLower(flightNumber), " ", "-"),
 		)
 
 		flightData := entity.Flight{
