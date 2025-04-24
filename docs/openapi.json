@@ -28,12 +28,6 @@
             },
             "dto.FlightSearchResponse": {
                 "properties": {
-                    "cheapest_flight": {
-                        "$ref": "#/components/schemas/entity.Flight"
-                    },
-                    "fastest_flight": {
-                        "$ref": "#/components/schemas/entity.Flight"
-                    },
                     "flights": {
                         "items": {
                             "$ref": "#/components/schemas/entity.Flight"
@@ -46,6 +40,25 @@
             "dto.HealthResponse": {
                 "properties": {
                     "status": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "dto.LoginRequest": {
+                "properties": {
+                    "password": {
+                        "type": "string"
+                    },
+                    "username": {
+                        "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "dto.LoginResponse": {
+                "properties": {
+                    "access_token": {
                         "type": "string"
                     }
                 },
@@ -64,6 +77,18 @@
                     },
                     "duration": {
                         "type": "integer"
+                    },
+                    "flight_number": {
+                        "type": "string"
+                    },
+                    "id": {
+                        "type": "string"
+                    },
+                    "is_cheapest": {
+                        "type": "boolean"
+                    },
+                    "is_fastest": {
+                        "type": "boolean"
                     },
                     "origin": {
                         "type": "string"
@@ -127,6 +152,79 @@
                 "summary": "Health check",
                 "tags": [
                     "Health"
+                ]
+            }
+        },
+        "/v1/auth/login": {
+            "post": {
+                "description": "Search for flights based on origin, destination, and date",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/dto.LoginRequest"
+                            }
+                        }
+                    },
+                    "description": "Request body",
+                    "required": true,
+                    "x-originalParamName": "request"
+                },
+                "responses": {
+                    "200": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/dto.LoginResponse"
+                                }
+                            }
+                        },
+                        "description": "OK"
+                    },
+                    "400": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/dto.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Bad Request"
+                    },
+                    "401": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/dto.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Unauthorized"
+                    },
+                    "404": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/dto.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Not Found"
+                    },
+                    "500": {
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/dto.ErrorResponse"
+                                }
+                            }
+                        },
+                        "description": "Internal Server Error"
+                    }
+                },
+                "summary": "Auth search",
+                "tags": [
+                    "Auth"
                 ]
             }
         },
@@ -214,6 +312,11 @@
                         "description": "Internal Server Error"
                     }
                 },
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "summary": "Flight search",
                 "tags": [
                     "Flight"

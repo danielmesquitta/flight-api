@@ -22,6 +22,7 @@ func NewFlightHandler(
 // @Summary Flight search
 // @Description Search for flights based on origin, destination, and date
 // @Tags Flight
+// @Security BearerAuth
 // @Accept json
 // @Produce json
 // @Param origin query string true "Origin airport code"

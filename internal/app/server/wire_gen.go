@@ -11,6 +11,7 @@ import (
 	"github.com/danielmesquitta/flight-api/internal/app/server/middleware"
 	"github.com/danielmesquitta/flight-api/internal/app/server/router"
 	"github.com/danielmesquitta/flight-api/internal/config/env"
+	"github.com/danielmesquitta/flight-api/internal/domain/usecase/auth"
 	"github.com/danielmesquitta/flight-api/internal/domain/usecase/flight"
 	"github.com/danielmesquitta/flight-api/internal/pkg/jwtutil"
 	"github.com/danielmesquitta/flight-api/internal/pkg/validator"
@@ -30,12 +31,14 @@ func NewTest(v validator.Validator, e *env.Env, t *testing.T) *App {
 	middlewareMiddleware := middleware.NewMiddleware(e, jwt)
 	healthHandler := handler.NewHealthHandler()
 	docHandler := handler.NewDocHandler()
+	loginUseCase := auth.NewLoginUseCase(jwt)
+	authHandler := handler.NewAuthHandler(loginUseCase)
 	redisCache := rediscache.NewRedisCache(e)
 	mockFlightAPI := mockflightapi.NewMockFlightAPI(t)
 	v2 := mockflightapi.NewMockFlightAPIs(mockFlightAPI)
 	searchFlightUseCase := flight.NewSearchFlightUseCase(v, redisCache, v2)
 	flightHandler := handler.NewFlightHandler(searchFlightUseCase)
-	routerRouter := router.NewRouter(e, middlewareMiddleware, healthHandler, docHandler, flightHandler)
+	routerRouter := router.NewRouter(e, middlewareMiddleware, healthHandler, docHandler, authHandler, flightHandler)
 	app := Build(middlewareMiddleware, routerRouter, redisCache)
 	return app
 }
@@ -46,13 +49,15 @@ func NewProd(v validator.Validator, e *env.Env, t *testing.T) *App {
 	middlewareMiddleware := middleware.NewMiddleware(e, jwt)
 	healthHandler := handler.NewHealthHandler()
 	docHandler := handler.NewDocHandler()
+	loginUseCase := auth.NewLoginUseCase(jwt)
+	authHandler := handler.NewAuthHandler(loginUseCase)
 	redisCache := rediscache.NewRedisCache(e)
 	amadeusAPI := amadeusapi.NewAmadeusAPI(e)
 	serpAPI := serpapi.NewSerpAPI(e)
 	v2 := flightapi.NewFlightAPIs(amadeusAPI, serpAPI)
 	searchFlightUseCase := flight.NewSearchFlightUseCase(v, redisCache, v2)
 	flightHandler := handler.NewFlightHandler(searchFlightUseCase)
-	routerRouter := router.NewRouter(e, middlewareMiddleware, healthHandler, docHandler, flightHandler)
+	routerRouter := router.NewRouter(e, middlewareMiddleware, healthHandler, docHandler, authHandler, flightHandler)
 	app := Build(middlewareMiddleware, routerRouter, redisCache)
 	return app
 }
@@ -63,13 +68,15 @@ func NewDev(v validator.Validator, e *env.Env, t *testing.T) *App {
 	middlewareMiddleware := middleware.NewMiddleware(e, jwt)
 	healthHandler := handler.NewHealthHandler()
 	docHandler := handler.NewDocHandler()
+	loginUseCase := auth.NewLoginUseCase(jwt)
+	authHandler := handler.NewAuthHandler(loginUseCase)
 	redisCache := rediscache.NewRedisCache(e)
 	amadeusAPI := amadeusapi.NewAmadeusAPI(e)
 	serpAPI := serpapi.NewSerpAPI(e)
 	v2 := flightapi.NewFlightAPIs(amadeusAPI, serpAPI)
 	searchFlightUseCase := flight.NewSearchFlightUseCase(v, redisCache, v2)
 	flightHandler := handler.NewFlightHandler(searchFlightUseCase)
-	routerRouter := router.NewRouter(e, middlewareMiddleware, healthHandler, docHandler, flightHandler)
+	routerRouter := router.NewRouter(e, middlewareMiddleware, healthHandler, docHandler, authHandler, flightHandler)
 	app := Build(middlewareMiddleware, routerRouter, redisCache)
 	return app
 }
@@ -80,13 +87,15 @@ func NewStaging(v validator.Validator, e *env.Env, t *testing.T) *App {
 	middlewareMiddleware := middleware.NewMiddleware(e, jwt)
 	healthHandler := handler.NewHealthHandler()
 	docHandler := handler.NewDocHandler()
+	loginUseCase := auth.NewLoginUseCase(jwt)
+	authHandler := handler.NewAuthHandler(loginUseCase)
 	redisCache := rediscache.NewRedisCache(e)
 	amadeusAPI := amadeusapi.NewAmadeusAPI(e)
 	serpAPI := serpapi.NewSerpAPI(e)
 	v2 := flightapi.NewFlightAPIs(amadeusAPI, serpAPI)
 	searchFlightUseCase := flight.NewSearchFlightUseCase(v, redisCache, v2)
 	flightHandler := handler.NewFlightHandler(searchFlightUseCase)
-	routerRouter := router.NewRouter(e, middlewareMiddleware, healthHandler, docHandler, flightHandler)
+	routerRouter := router.NewRouter(e, middlewareMiddleware, healthHandler, docHandler, authHandler, flightHandler)
 	app := Build(middlewareMiddleware, routerRouter, redisCache)
 	return app
 }

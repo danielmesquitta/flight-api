@@ -3,6 +3,7 @@ package amadeusapi
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log/slog"
 	"strconv"
 	"strings"
@@ -29,8 +30,10 @@ type SearchFlightsResponseItinerary struct {
 }
 
 type SearchFlightsResponseSegment struct {
-	Departure SearchFlightsResponseArrival `json:"departure"`
-	Arrival   SearchFlightsResponseArrival `json:"arrival"`
+	CarrierCode string                       `json:"carrierCode"`
+	Number      string                       `json:"number"`
+	Departure   SearchFlightsResponseArrival `json:"departure"`
+	Arrival     SearchFlightsResponseArrival `json:"arrival"`
 }
 
 type SearchFlightsResponseArrival struct {
@@ -101,13 +104,22 @@ func (a *AmadeusAPI) SearchFlights(
 			return nil, errs.New(err)
 		}
 
+		flightNumber := fmt.Sprintf("%s %s", firstSegment.CarrierCode, firstSegment.Number)
+
+		id := fmt.Sprintf(
+			"amadeus-%s",
+			strings.Replace(strings.ToLower(flightNumber), " ", "-", -1),
+		)
+
 		flightData := entity.Flight{
-			Origin:      origin,
-			Destination: destination,
-			DepartureAt: departureAt,
-			ArrivalAt:   arrivalAt,
-			Duration:    int64(duration),
-			Price:       int64(price * 100),
+			ID:           id,
+			FlightNumber: flightNumber,
+			Origin:       origin,
+			Destination:  destination,
+			DepartureAt:  departureAt,
+			ArrivalAt:    arrivalAt,
+			Duration:     int64(duration),
+			Price:        int64(price * 100),
 		}
 
 		flights = append(flights, flightData)

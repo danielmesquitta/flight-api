@@ -38,9 +38,7 @@ type SearchFlightUseCaseInput struct {
 }
 
 type SearchFlightUseCaseOutput struct {
-	CheapestFlight *entity.Flight  `json:"cheapest_flight,omitzero"`
-	FastestFlight  *entity.Flight  `json:"fastest_flight,omitzero"`
-	Flights        []entity.Flight `json:"flights,omitzero"`
+	Data []entity.Flight `json:"flights,omitzero"`
 }
 
 func (s *SearchFlightUseCase) Execute(
@@ -96,24 +94,10 @@ func (s *SearchFlightUseCase) Execute(
 		return nil, errs.ErrFlightSearchNotFound
 	}
 
-	var cheapest, fastest *entity.Flight
-	for i := range allFlights {
-		flight := &allFlights[i]
-
-		if cheapest == nil || flight.Price < cheapest.Price {
-			cheapest = flight
-		}
-
-		duration := flight.ArrivalAt.Sub(flight.DepartureAt)
-		if fastest == nil || duration < fastest.ArrivalAt.Sub(fastest.DepartureAt) {
-			fastest = flight
-		}
-	}
+	s.setFastestAndCheapest(allFlights)
 
 	out = &SearchFlightUseCaseOutput{
-		CheapestFlight: cheapest,
-		FastestFlight:  fastest,
-		Flights:        allFlights,
+		Data: allFlights,
 	}
 
 	if err := s.c.Set(ctx, cacheKey, out, time.Second*30); err != nil {
@@ -125,4 +109,29 @@ func (s *SearchFlightUseCase) Execute(
 	}
 
 	return out, nil
+}
+
+func (s *SearchFlightUseCase) setFastestAndCheapest(
+	flights []entity.Flight,
+) {
+	var cheapest, fastest *entity.Flight
+	for i := range flights {
+		flight := &flights[i]
+
+		if cheapest == nil || flight.Price < cheapest.Price {
+			cheapest = flight
+		}
+
+		duration := flight.ArrivalAt.Sub(flight.DepartureAt)
+		if fastest == nil || duration < fastest.ArrivalAt.Sub(fastest.DepartureAt) {
+			fastest = flight
+		}
+	}
+
+	if cheapest != nil {
+		cheapest.IsCheapest = true
+	}
+	if fastest != nil {
+		fastest.IsFastest = true
+	}
 }

@@ -10,6 +10,7 @@ import (
 	"github.com/danielmesquitta/flight-api/internal/app/server/middleware"
 	"github.com/danielmesquitta/flight-api/internal/app/server/router"
 	"github.com/danielmesquitta/flight-api/internal/config/env"
+	"github.com/danielmesquitta/flight-api/internal/domain/usecase/auth"
 	"github.com/danielmesquitta/flight-api/internal/domain/usecase/flight"
 	"github.com/danielmesquitta/flight-api/internal/pkg/jwtutil"
 	"github.com/danielmesquitta/flight-api/internal/pkg/validator"
@@ -41,9 +42,11 @@ func NewTest(
 		wire.Bind(new(cache.Cache), new(*rediscache.RedisCache)),
 		rediscache.NewRedisCache,
 		flight.NewSearchFlightUseCase,
+		auth.NewLoginUseCase,
 		handler.NewDocHandler,
 		handler.NewHealthHandler,
 		handler.NewFlightHandler,
+		handler.NewAuthHandler,
 		middleware.NewMiddleware,
 		router.NewRouter,
 		Build,
@@ -65,9 +68,11 @@ func NewProd(
 		wire.Bind(new(cache.Cache), new(*rediscache.RedisCache)),
 		rediscache.NewRedisCache,
 		flight.NewSearchFlightUseCase,
+		auth.NewLoginUseCase,
 		handler.NewDocHandler,
 		handler.NewHealthHandler,
 		handler.NewFlightHandler,
+		handler.NewAuthHandler,
 		middleware.NewMiddleware,
 		router.NewRouter,
 		Build,
@@ -89,9 +94,11 @@ func NewDev(
 		wire.Bind(new(cache.Cache), new(*rediscache.RedisCache)),
 		rediscache.NewRedisCache,
 		flight.NewSearchFlightUseCase,
+		auth.NewLoginUseCase,
 		handler.NewDocHandler,
 		handler.NewHealthHandler,
 		handler.NewFlightHandler,
+		handler.NewAuthHandler,
 		middleware.NewMiddleware,
 		router.NewRouter,
 		Build,
@@ -113,9 +120,11 @@ func NewStaging(
 		wire.Bind(new(cache.Cache), new(*rediscache.RedisCache)),
 		rediscache.NewRedisCache,
 		flight.NewSearchFlightUseCase,
+		auth.NewLoginUseCase,
 		handler.NewDocHandler,
 		handler.NewHealthHandler,
 		handler.NewFlightHandler,
+		handler.NewAuthHandler,
 		middleware.NewMiddleware,
 		router.NewRouter,
 		Build,

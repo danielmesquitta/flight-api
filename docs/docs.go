@@ -47,8 +47,71 @@ const docTemplate = `{
                 }
             }
         },
+        "/v1/auth/login": {
+            "post": {
+                "description": "Search for flights based on origin, destination, and date",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "Auth search",
+                "parameters": [
+                    {
+                        "description": "Request body",
+                        "name": "request",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/dto.LoginResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/dto.ErrorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/v1/flights/search": {
             "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
                 "description": "Search for flights based on origin, destination, and date",
                 "consumes": [
                     "application/json"
@@ -147,12 +210,6 @@ const docTemplate = `{
         "dto.FlightSearchResponse": {
             "type": "object",
             "properties": {
-                "cheapest_flight": {
-                    "$ref": "#/definitions/entity.Flight"
-                },
-                "fastest_flight": {
-                    "$ref": "#/definitions/entity.Flight"
-                },
                 "flights": {
                     "type": "array",
                     "items": {
@@ -165,6 +222,25 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.LoginRequest": {
+            "type": "object",
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.LoginResponse": {
+            "type": "object",
+            "properties": {
+                "access_token": {
                     "type": "string"
                 }
             }
@@ -183,6 +259,18 @@ const docTemplate = `{
                 },
                 "duration": {
                     "type": "integer"
+                },
+                "flight_number": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "is_cheapest": {
+                    "type": "boolean"
+                },
+                "is_fastest": {
+                    "type": "boolean"
                 },
                 "origin": {
                     "type": "string"

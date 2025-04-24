@@ -11,6 +11,7 @@ import (
 	"github.com/danielmesquitta/flight-api/internal/app/server/middleware"
 	"github.com/danielmesquitta/flight-api/internal/app/server/router"
 	"github.com/danielmesquitta/flight-api/internal/config/env"
+	"github.com/danielmesquitta/flight-api/internal/domain/usecase/auth"
 	"github.com/danielmesquitta/flight-api/internal/domain/usecase/flight"
 	"github.com/danielmesquitta/flight-api/internal/pkg/jwtutil"
 	"github.com/danielmesquitta/flight-api/internal/pkg/validator"
@@ -45,10 +46,12 @@ var providers = []any{
 	rediscache.NewRedisCache,
 
 	flight.NewSearchFlightUseCase,
+	auth.NewLoginUseCase,
 
 	handler.NewDocHandler,
 	handler.NewHealthHandler,
 	handler.NewFlightHandler,
+	handler.NewAuthHandler,
 
 	middleware.NewMiddleware,
 

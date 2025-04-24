@@ -3,7 +3,9 @@ package serpapi
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"log/slog"
+	"strings"
 	"time"
 
 	"github.com/danielmesquitta/flight-api/internal/domain/entity"
@@ -23,6 +25,7 @@ type Flight struct {
 }
 
 type FlightElement struct {
+	FlightNumber     string  `json:"flight_number"`
 	DepartureAirport Airport `json:"departure_airport"`
 	ArrivalAirport   Airport `json:"arrival_airport"`
 }
@@ -78,13 +81,20 @@ func (a *SerpAPI) SearchFlights(
 
 		duration := time.Duration(flight.TotalDuration) * time.Minute
 
+		id := fmt.Sprintf(
+			"serp-%s",
+			strings.Replace(strings.ToLower(firstSegment.FlightNumber), " ", "-", -1),
+		)
+
 		flightData := entity.Flight{
-			Origin:      origin,
-			Destination: destination,
-			DepartureAt: departureAt,
-			ArrivalAt:   arrivalAt,
-			Duration:    int64(duration),
-			Price:       int64(flight.Price * 100),
+			ID:           id,
+			FlightNumber: firstSegment.FlightNumber,
+			Origin:       origin,
+			Destination:  destination,
+			DepartureAt:  departureAt,
+			ArrivalAt:    arrivalAt,
+			Duration:     int64(duration),
+			Price:        int64(flight.Price * 100),
 		}
 
 		flights = append(flights, flightData)
