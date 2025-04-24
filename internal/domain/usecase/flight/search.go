@@ -1,7 +1,9 @@
 package flight
 
 import (
+	"cmp"
 	"context"
+	"fmt"
 	"log/slog"
 	"sort"
 	"time"
@@ -41,7 +43,7 @@ type SearchFlightUseCaseInput struct {
 }
 
 type SearchFlightUseCaseOutput struct {
-	Data []entity.Flight `json:"flights,omitzero"`
+	Data []entity.Flight `json:"data,omitzero"`
 }
 
 func (s *SearchFlightUseCase) Execute(
@@ -52,7 +54,17 @@ func (s *SearchFlightUseCase) Execute(
 		return nil, errs.New(err)
 	}
 
-	cacheKey := in.Origin + "_" + in.Destination + "_" + in.Date.Format(time.DateOnly)
+	in.SortBy = cmp.Or(in.SortBy, "price")
+	in.SortOrder = cmp.Or(in.SortOrder, "asc")
+
+	cacheKey := fmt.Sprintf(
+		"%s_%s_%s_%s_%s",
+		in.Origin,
+		in.Destination,
+		in.Date.Format(time.DateOnly),
+		in.SortBy,
+		in.SortOrder,
+	)
 
 	out := &SearchFlightUseCaseOutput{}
 	ok, err := s.c.Scan(ctx, cacheKey, out)

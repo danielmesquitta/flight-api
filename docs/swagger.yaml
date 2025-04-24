@@ -18,7 +18,7 @@ definitions:
     type: object
   dto.FlightSearchResponse:
     properties:
-      flights:
+      data:
         items:
           $ref: '#/definitions/entity.Flight'
         type: array

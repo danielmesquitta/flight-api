@@ -28,7 +28,7 @@
             },
             "dto.FlightSearchResponse": {
                 "properties": {
-                    "flights": {
+                    "data": {
                         "items": {
                             "$ref": "#/components/schemas/entity.Flight"
                         },

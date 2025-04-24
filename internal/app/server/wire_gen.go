@@ -25,6 +25,43 @@ import (
 
 // Injectors from wire.go:
 
+// NewTest wires up the application in test mode.
+func NewTest(v validator.Validator, e *env.Env, t *testing.T) *App {
+	jwt := jwtutil.NewJWT(e)
+	middlewareMiddleware := middleware.NewMiddleware(e, jwt)
+	healthHandler := handler.NewHealthHandler()
+	docHandler := handler.NewDocHandler()
+	loginUseCase := auth.NewLoginUseCase(jwt)
+	authHandler := handler.NewAuthHandler(loginUseCase)
+	redisCache := rediscache.NewRedisCache(e)
+	mockFlightAPI := mockflightapi.NewMockFlightAPI(t)
+	v2 := mockflightapi.NewMockFlightAPIs(mockFlightAPI)
+	searchFlightUseCase := flight.NewSearchFlightUseCase(v, redisCache, v2)
+	flightHandler := handler.NewFlightHandler(searchFlightUseCase)
+	routerRouter := router.NewRouter(e, middlewareMiddleware, healthHandler, docHandler, authHandler, flightHandler)
+	app := Build(middlewareMiddleware, routerRouter, redisCache)
+	return app
+}
+
+// NewProd wires up the application in prod mode.
+func NewProd(v validator.Validator, e *env.Env, t *testing.T) *App {
+	jwt := jwtutil.NewJWT(e)
+	middlewareMiddleware := middleware.NewMiddleware(e, jwt)
+	healthHandler := handler.NewHealthHandler()
+	docHandler := handler.NewDocHandler()
+	loginUseCase := auth.NewLoginUseCase(jwt)
+	authHandler := handler.NewAuthHandler(loginUseCase)
+	redisCache := rediscache.NewRedisCache(e)
+	amadeusAPI := amadeusapi.NewAmadeusAPI(e)
+	serpAPI := serpapi.NewSerpAPI(e)
+	v2 := flightapi.NewFlightAPIs(amadeusAPI, serpAPI)
+	searchFlightUseCase := flight.NewSearchFlightUseCase(v, redisCache, v2)
+	flightHandler := handler.NewFlightHandler(searchFlightUseCase)
+	routerRouter := router.NewRouter(e, middlewareMiddleware, healthHandler, docHandler, authHandler, flightHandler)
+	app := Build(middlewareMiddleware, routerRouter, redisCache)
+	return app
+}
+
 // NewDev wires up the application in dev mode.
 func NewDev(v validator.Validator, e *env.Env, t *testing.T) *App {
 	jwt := jwtutil.NewJWT(e)
@@ -46,43 +83,6 @@ func NewDev(v validator.Validator, e *env.Env, t *testing.T) *App {
 
 // NewStaging wires up the application in staging mode.
 func NewStaging(v validator.Validator, e *env.Env, t *testing.T) *App {
-	jwt := jwtutil.NewJWT(e)
-	middlewareMiddleware := middleware.NewMiddleware(e, jwt)
-	healthHandler := handler.NewHealthHandler()
-	docHandler := handler.NewDocHandler()
-	loginUseCase := auth.NewLoginUseCase(jwt)
-	authHandler := handler.NewAuthHandler(loginUseCase)
-	redisCache := rediscache.NewRedisCache(e)
-	amadeusAPI := amadeusapi.NewAmadeusAPI(e)
-	serpAPI := serpapi.NewSerpAPI(e)
-	v2 := flightapi.NewFlightAPIs(amadeusAPI, serpAPI)
-	searchFlightUseCase := flight.NewSearchFlightUseCase(v, redisCache, v2)
-	flightHandler := handler.NewFlightHandler(searchFlightUseCase)
-	routerRouter := router.NewRouter(e, middlewareMiddleware, healthHandler, docHandler, authHandler, flightHandler)
-	app := Build(middlewareMiddleware, routerRouter, redisCache)
-	return app
-}
-
-// NewTest wires up the application in test mode.
-func NewTest(v validator.Validator, e *env.Env, t *testing.T) *App {
-	jwt := jwtutil.NewJWT(e)
-	middlewareMiddleware := middleware.NewMiddleware(e, jwt)
-	healthHandler := handler.NewHealthHandler()
-	docHandler := handler.NewDocHandler()
-	loginUseCase := auth.NewLoginUseCase(jwt)
-	authHandler := handler.NewAuthHandler(loginUseCase)
-	redisCache := rediscache.NewRedisCache(e)
-	mockFlightAPI := mockflightapi.NewMockFlightAPI(t)
-	v2 := mockflightapi.NewMockFlightAPIs(mockFlightAPI)
-	searchFlightUseCase := flight.NewSearchFlightUseCase(v, redisCache, v2)
-	flightHandler := handler.NewFlightHandler(searchFlightUseCase)
-	routerRouter := router.NewRouter(e, middlewareMiddleware, healthHandler, docHandler, authHandler, flightHandler)
-	app := Build(middlewareMiddleware, routerRouter, redisCache)
-	return app
-}
-
-// NewProd wires up the application in prod mode.
-func NewProd(v validator.Validator, e *env.Env, t *testing.T) *App {
 	jwt := jwtutil.NewJWT(e)
 	middlewareMiddleware := middleware.NewMiddleware(e, jwt)
 	healthHandler := handler.NewHealthHandler()

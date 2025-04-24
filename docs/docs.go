@@ -222,7 +222,7 @@ const docTemplate = `{
         "dto.FlightSearchResponse": {
             "type": "object",
             "properties": {
-                "flights": {
+                "data": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/entity.Flight"
