@@ -34,7 +34,7 @@ type Env struct {
 	AmadeusAPIKey           string      `mapstructure:"AMADEUS_API_KEY"             validate:"required"`
 	AmadeusAPISecret        string      `mapstructure:"AMADEUS_API_SECRET"          validate:"required"`
 	SerpAPIKey              string      `mapstructure:"SERP_API_KEY"                validate:"required"`
-	DuffelAPIToken          string      `mapstructure:"DUFFEL_API_TOKEN"            validate:"required"`
+	DuffelAPIKey            string      `mapstructure:"DUFFEL_API_KEY"              validate:"required"`
 }
 
 func NewEnv(v validator.Validator) *Env {

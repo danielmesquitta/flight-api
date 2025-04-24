@@ -16,7 +16,7 @@ func NewDuffelAPI(
 	c := resty.New().
 		SetBaseURL("https://api.duffel.com").
 		SetHeaders(map[string]string{
-			"Authorization":  "Bearer " + e.DuffelAPIToken,
+			"Authorization":  "Bearer " + e.DuffelAPIKey,
 			"Duffel-Version": "v2",
 		})
 
