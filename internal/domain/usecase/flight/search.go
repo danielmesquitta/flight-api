@@ -36,7 +36,7 @@ type SearchFlightUseCaseInput struct {
 	Origin      string    `json:"origin"               validate:"required,len=3"`
 	Destination string    `json:"destination"          validate:"required,len=3"`
 	Date        time.Time `json:"date"                 validate:"required"`
-	SortBy      string    `json:"sort_by,omitempty"    validate:"omitempty,oneof=price duration"`
+	SortBy      string    `json:"sort_by,omitempty"    validate:"omitempty,oneof=price duration departure"`
 	SortOrder   string    `json:"sort_order,omitempty" validate:"omitempty,oneof=asc desc"`
 }
 
@@ -152,6 +152,9 @@ func (s *SearchFlightUseCase) sortFlights(
 			di := flights[i].ArrivalAt.Sub(flights[i].DepartureAt)
 			dj := flights[j].ArrivalAt.Sub(flights[j].DepartureAt)
 			less = di < dj
+
+		case "departure":
+			less = flights[i].DepartureAt.Before(flights[j].DepartureAt)
 
 		default: // "price"
 			less = flights[i].Price < flights[j].Price
