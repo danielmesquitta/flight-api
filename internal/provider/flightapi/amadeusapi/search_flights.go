@@ -82,7 +82,12 @@ func (a *AmadeusAPI) SearchFlights(
 		firstSegment := itinerary.Segments[0]
 		departureAt, err := dateparse.ParseAny(firstSegment.Departure.At)
 		if err != nil {
-			slog.ErrorContext(ctx, "failed to parse departure date", "error", err)
+			slog.ErrorContext(
+				ctx,
+				"failed to parse departure date",
+				"error",
+				err,
+			)
 			continue
 		}
 
@@ -104,7 +109,11 @@ func (a *AmadeusAPI) SearchFlights(
 			return nil, errs.New(err)
 		}
 
-		flightNumber := fmt.Sprintf("%s %s", firstSegment.CarrierCode, firstSegment.Number)
+		flightNumber := fmt.Sprintf(
+			"%s %s",
+			firstSegment.CarrierCode,
+			firstSegment.Number,
+		)
 
 		id := fmt.Sprintf(
 			"amadeus-%s",

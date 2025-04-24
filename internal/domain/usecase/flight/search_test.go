@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func TestSearchFlightUseCase_Execute(t *testing.T) {
+func TestSearchFlightsUseCase_Execute(t *testing.T) {
 	type fields struct {
 		v validator.Validator
 		c *mockcache.MockCache
@@ -23,14 +23,16 @@ func TestSearchFlightUseCase_Execute(t *testing.T) {
 	type Test struct {
 		name    string
 		fields  fields
-		args    SearchFlightUseCaseInput
-		want    *SearchFlightUseCaseOutput
+		args    SearchFlightsUseCaseInput
+		want    *SearchFlightsUseCaseOutput
 		wantErr bool
 	}
 	tests := []Test{
 		func() Test {
 			c := mockcache.NewMockCache(t)
-			c.EXPECT().Scan(context.Background(), mock.Anything, mock.Anything).Return(false, nil)
+			c.EXPECT().
+				Scan(context.Background(), mock.Anything, mock.Anything).
+				Return(false, nil)
 			c.EXPECT().
 				Set(context.Background(), mock.Anything, mock.Anything, mock.Anything).
 				Return(nil)
@@ -70,14 +72,14 @@ func TestSearchFlightUseCase_Execute(t *testing.T) {
 						f,
 					},
 				},
-				args: SearchFlightUseCaseInput{
+				args: SearchFlightsUseCaseInput{
 					Origin:      "LAX",
 					Destination: "JFK",
 					Date:        time.Now(),
 					SortBy:      "price",
 					SortOrder:   "asc",
 				},
-				want: &SearchFlightUseCaseOutput{
+				want: &SearchFlightsUseCaseOutput{
 					Data: wantFlights,
 				},
 				wantErr: false,
@@ -85,7 +87,9 @@ func TestSearchFlightUseCase_Execute(t *testing.T) {
 		}(),
 		func() Test {
 			c := mockcache.NewMockCache(t)
-			c.EXPECT().Scan(context.Background(), mock.Anything, mock.Anything).Return(false, nil)
+			c.EXPECT().
+				Scan(context.Background(), mock.Anything, mock.Anything).
+				Return(false, nil)
 			c.EXPECT().
 				Set(context.Background(), mock.Anything, mock.Anything, mock.Anything).
 				Return(nil)
@@ -143,14 +147,14 @@ func TestSearchFlightUseCase_Execute(t *testing.T) {
 						f,
 					},
 				},
-				args: SearchFlightUseCaseInput{
+				args: SearchFlightsUseCaseInput{
 					Origin:      "LAX",
 					Destination: "JFK",
 					Date:        time.Now(),
 					SortBy:      "price",
 					SortOrder:   "asc",
 				},
-				want: &SearchFlightUseCaseOutput{
+				want: &SearchFlightsUseCaseOutput{
 					Data: wantFlights,
 				},
 				wantErr: false,
@@ -158,7 +162,9 @@ func TestSearchFlightUseCase_Execute(t *testing.T) {
 		}(),
 		func() Test {
 			c := mockcache.NewMockCache(t)
-			c.EXPECT().Scan(context.Background(), mock.Anything, mock.Anything).Return(false, nil)
+			c.EXPECT().
+				Scan(context.Background(), mock.Anything, mock.Anything).
+				Return(false, nil)
 			c.EXPECT().
 				Set(context.Background(), mock.Anything, mock.Anything, mock.Anything).
 				Return(nil)
@@ -216,14 +222,14 @@ func TestSearchFlightUseCase_Execute(t *testing.T) {
 						f,
 					},
 				},
-				args: SearchFlightUseCaseInput{
+				args: SearchFlightsUseCaseInput{
 					Origin:      "LAX",
 					Destination: "JFK",
 					Date:        time.Now(),
 					SortBy:      "duration",
 					SortOrder:   "asc",
 				},
-				want: &SearchFlightUseCaseOutput{
+				want: &SearchFlightsUseCaseOutput{
 					Data: wantFlights,
 				},
 				wantErr: false,
@@ -231,7 +237,9 @@ func TestSearchFlightUseCase_Execute(t *testing.T) {
 		}(),
 		func() Test {
 			c := mockcache.NewMockCache(t)
-			c.EXPECT().Scan(context.Background(), mock.Anything, mock.Anything).Return(false, nil)
+			c.EXPECT().
+				Scan(context.Background(), mock.Anything, mock.Anything).
+				Return(false, nil)
 			c.EXPECT().
 				Set(context.Background(), mock.Anything, mock.Anything, mock.Anything).
 				Return(nil)
@@ -289,14 +297,14 @@ func TestSearchFlightUseCase_Execute(t *testing.T) {
 						f,
 					},
 				},
-				args: SearchFlightUseCaseInput{
+				args: SearchFlightsUseCaseInput{
 					Origin:      "LAX",
 					Destination: "JFK",
 					Date:        time.Now(),
 					SortBy:      "departure",
 					SortOrder:   "asc",
 				},
-				want: &SearchFlightUseCaseOutput{
+				want: &SearchFlightsUseCaseOutput{
 					Data: wantFlights,
 				},
 				wantErr: false,
@@ -304,7 +312,9 @@ func TestSearchFlightUseCase_Execute(t *testing.T) {
 		}(),
 		func() Test {
 			c := mockcache.NewMockCache(t)
-			c.EXPECT().Scan(context.Background(), mock.Anything, mock.Anything).Return(true, nil)
+			c.EXPECT().
+				Scan(context.Background(), mock.Anything, mock.Anything).
+				Return(true, nil)
 			f := mockflightapi.NewMockFlightAPI(t)
 
 			return Test{
@@ -316,20 +326,22 @@ func TestSearchFlightUseCase_Execute(t *testing.T) {
 						f,
 					},
 				},
-				args: SearchFlightUseCaseInput{
+				args: SearchFlightsUseCaseInput{
 					Origin:      "LAX",
 					Destination: "JFK",
 					Date:        time.Now(),
 					SortBy:      "price",
 					SortOrder:   "asc",
 				},
-				want:    &SearchFlightUseCaseOutput{},
+				want:    &SearchFlightsUseCaseOutput{},
 				wantErr: false,
 			}
 		}(),
 		func() Test {
 			c := mockcache.NewMockCache(t)
-			c.EXPECT().Scan(context.Background(), mock.Anything, mock.Anything).Return(false, nil)
+			c.EXPECT().
+				Scan(context.Background(), mock.Anything, mock.Anything).
+				Return(false, nil)
 
 			flights := []entity.Flight{}
 
@@ -347,7 +359,7 @@ func TestSearchFlightUseCase_Execute(t *testing.T) {
 						f,
 					},
 				},
-				args: SearchFlightUseCaseInput{
+				args: SearchFlightsUseCaseInput{
 					Origin:      "LAX",
 					Destination: "JFK",
 					Date:        time.Now(),
@@ -361,7 +373,7 @@ func TestSearchFlightUseCase_Execute(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			s := &SearchFlightUseCase{
+			s := &SearchFlightsUseCase{
 				v: tt.fields.v,
 				c: tt.fields.c,
 				f: tt.fields.f,

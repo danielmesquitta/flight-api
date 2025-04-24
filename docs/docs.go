@@ -162,7 +162,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.FlightSearchResponse"
+                            "$ref": "#/definitions/dto.SearchFlightsResponse"
                         }
                     },
                     "400": {
@@ -219,7 +219,7 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.FlightSearchResponse": {
+        "dto.SearchFlightsResponse": {
             "type": "object",
             "properties": {
                 "data": {

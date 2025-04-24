@@ -26,7 +26,7 @@
                 },
                 "type": "object"
             },
-            "dto.FlightSearchResponse": {
+            "dto.SearchFlightsResponse": {
                 "properties": {
                     "data": {
                         "items": {
@@ -285,7 +285,7 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/dto.FlightSearchResponse"
+                                    "$ref": "#/components/schemas/dto.SearchFlightsResponse"
                                 }
                             }
                         },

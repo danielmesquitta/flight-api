@@ -10,11 +10,11 @@ import (
 )
 
 type FlightHandler struct {
-	sfuc *flight.SearchFlightUseCase
+	sfuc *flight.SearchFlightsUseCase
 }
 
 func NewFlightHandler(
-	sfuc *flight.SearchFlightUseCase,
+	sfuc *flight.SearchFlightsUseCase,
 ) *FlightHandler {
 	return &FlightHandler{
 		sfuc: sfuc,
@@ -32,7 +32,7 @@ func NewFlightHandler(
 // @Param date query string true "Departure date (YYYY-MM-DD)"
 // @Param sort_by query string false "Sort by field (price or duration)"
 // @Param sort_order query string false "Sort order (asc or desc)"
-// @Success 200 {object} dto.FlightSearchResponse
+// @Success 200 {object} dto.SearchFlightsResponse
 // @Failure 400 {object} dto.ErrorResponse
 // @Failure 401 {object} dto.ErrorResponse
 // @Failure 404 {object} dto.ErrorResponse
@@ -56,7 +56,7 @@ func (h *FlightHandler) Search(c *fiber.Ctx) error {
 	sortBy := c.Query(QueryParamSortBy)
 	sortOrder := c.Query(QueryParamSortOrder)
 
-	in := flight.SearchFlightUseCaseInput{
+	in := flight.SearchFlightsUseCaseInput{
 		Origin:      origin,
 		Destination: destination,
 		Date:        date,
@@ -69,7 +69,7 @@ func (h *FlightHandler) Search(c *fiber.Ctx) error {
 		return errs.New(err)
 	}
 
-	return c.JSON(dto.FlightSearchResponse{
-		SearchFlightUseCaseOutput: out,
+	return c.JSON(dto.SearchFlightsResponse{
+		SearchFlightsUseCaseOutput: out,
 	})
 }

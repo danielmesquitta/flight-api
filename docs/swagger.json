@@ -155,7 +155,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/dto.FlightSearchResponse"
+                            "$ref": "#/definitions/dto.SearchFlightsResponse"
                         }
                     },
                     "400": {
@@ -212,7 +212,7 @@
                 }
             }
         },
-        "dto.FlightSearchResponse": {
+        "dto.SearchFlightsResponse": {
             "type": "object",
             "properties": {
                 "data": {

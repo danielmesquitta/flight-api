@@ -45,7 +45,9 @@ func (a *SerpAPI) SearchFlights(
 			"departure_id":  origin,
 			"arrival_id":    destination,
 			"outbound_date": date.Format(time.DateOnly),
-			"return_date":   date.AddDate(0, 0, 7).Format(time.DateOnly), // Assuming a 7-day return
+			"return_date": date.AddDate(0, 0, 7).
+				Format(time.DateOnly),
+			// Assuming a 7-day return
 		}).
 		Get("/")
 	if err != nil {
@@ -66,9 +68,16 @@ func (a *SerpAPI) SearchFlights(
 	flights := make([]entity.Flight, 0, len(allFlights))
 	for _, flight := range allFlights {
 		firstSegment := flight.Flights[0]
-		departureAt, err := dateparse.ParseAny(firstSegment.DepartureAirport.Time)
+		departureAt, err := dateparse.ParseAny(
+			firstSegment.DepartureAirport.Time,
+		)
 		if err != nil {
-			slog.ErrorContext(ctx, "failed to parse departure date", "error", err)
+			slog.ErrorContext(
+				ctx,
+				"failed to parse departure date",
+				"error",
+				err,
+			)
 			continue
 		}
 
@@ -83,7 +92,11 @@ func (a *SerpAPI) SearchFlights(
 
 		id := fmt.Sprintf(
 			"serp-%s",
-			strings.ReplaceAll(strings.ToLower(firstSegment.FlightNumber), " ", "-"),
+			strings.ReplaceAll(
+				strings.ToLower(firstSegment.FlightNumber),
+				" ",
+				"-",
+			),
 		)
 
 		flightData := entity.Flight{

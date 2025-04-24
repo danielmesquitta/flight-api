@@ -16,25 +16,25 @@ import (
 	"golang.org/x/sync/errgroup"
 )
 
-type SearchFlightUseCase struct {
+type SearchFlightsUseCase struct {
 	v validator.Validator
 	c cache.Cache
 	f []flightapi.FlightAPI
 }
 
-func NewSearchFlightUseCase(
+func NewSearchFlightsUseCase(
 	v validator.Validator,
 	c cache.Cache,
 	f []flightapi.FlightAPI,
-) *SearchFlightUseCase {
-	return &SearchFlightUseCase{
+) *SearchFlightsUseCase {
+	return &SearchFlightsUseCase{
 		v: v,
 		c: c,
 		f: f,
 	}
 }
 
-type SearchFlightUseCaseInput struct {
+type SearchFlightsUseCaseInput struct {
 	Origin      string    `json:"origin"      validate:"required,len=3"`
 	Destination string    `json:"destination" validate:"required,len=3"`
 	Date        time.Time `json:"date"        validate:"required"`
@@ -42,14 +42,14 @@ type SearchFlightUseCaseInput struct {
 	SortOrder   string    `json:"sort_order"  validate:"omitempty,oneof=asc desc"`
 }
 
-type SearchFlightUseCaseOutput struct {
+type SearchFlightsUseCaseOutput struct {
 	Data []entity.Flight `json:"data,omitzero"`
 }
 
-func (s *SearchFlightUseCase) Execute(
+func (s *SearchFlightsUseCase) Execute(
 	ctx context.Context,
-	in SearchFlightUseCaseInput,
-) (*SearchFlightUseCaseOutput, error) {
+	in SearchFlightsUseCaseInput,
+) (*SearchFlightsUseCaseOutput, error) {
 	if err := s.v.Validate(in); err != nil {
 		return nil, errs.New(err)
 	}
@@ -66,7 +66,7 @@ func (s *SearchFlightUseCase) Execute(
 		in.SortOrder,
 	)
 
-	out := &SearchFlightUseCaseOutput{}
+	out := &SearchFlightsUseCaseOutput{}
 	ok, err := s.c.Scan(ctx, cacheKey, out)
 	if err != nil {
 		slog.ErrorContext(
@@ -106,14 +106,14 @@ func (s *SearchFlightUseCase) Execute(
 	}
 
 	if len(allFlights) == 0 {
-		return nil, errs.ErrFlightSearchNotFound
+		return nil, errs.ErrSearchFlightsNotFound
 	}
 
 	s.setFastestAndCheapest(allFlights)
 
 	s.sortFlights(allFlights, in.SortBy, in.SortOrder)
 
-	out = &SearchFlightUseCaseOutput{
+	out = &SearchFlightsUseCaseOutput{
 		Data: allFlights,
 	}
 
@@ -128,7 +128,7 @@ func (s *SearchFlightUseCase) Execute(
 	return out, nil
 }
 
-func (s *SearchFlightUseCase) setFastestAndCheapest(
+func (s *SearchFlightsUseCase) setFastestAndCheapest(
 	flights []entity.Flight,
 ) {
 	var cheapest, fastest *entity.Flight
@@ -152,7 +152,7 @@ func (s *SearchFlightUseCase) setFastestAndCheapest(
 	}
 }
 
-func (s *SearchFlightUseCase) sortFlights(
+func (s *SearchFlightsUseCase) sortFlights(
 	flights []entity.Flight,
 	sortBy, sortOrder string,
 ) {

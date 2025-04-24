@@ -47,7 +47,7 @@ var providers = []any{
 	wire.Bind(new(cache.Cache), new(*rediscache.RedisCache)),
 	rediscache.NewRedisCache,
 
-	flight.NewSearchFlightUseCase,
+	flight.NewSearchFlightsUseCase,
 	auth.NewLoginUseCase,
 
 	handler.NewDocHandler,
