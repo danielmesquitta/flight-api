@@ -1,10 +1,10 @@
 package validator
 
 import (
-	"errors"
 	"log"
 	"strings"
 
+	"github.com/danielmesquitta/flight-api/internal/domain/errs"
 	"github.com/go-playground/locales/en"
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
@@ -65,7 +65,7 @@ func (v *Validation) Validate(
 		", ",
 	)
 
-	return errors.New(errMsg)
+	return errs.New(errMsg, errs.ErrCodeValidation)
 }
 
 var _ Validator = (*Validation)(nil)
