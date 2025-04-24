@@ -18,7 +18,6 @@ import (
 	"github.com/danielmesquitta/flight-api/internal/provider/cache/rediscache"
 	"github.com/danielmesquitta/flight-api/internal/provider/flightapi"
 	"github.com/danielmesquitta/flight-api/internal/provider/flightapi/amadeusapi"
-	"github.com/danielmesquitta/flight-api/internal/provider/flightapi/mockflightapi"
 	"github.com/danielmesquitta/flight-api/internal/provider/flightapi/serpapi"
 	"testing"
 )
@@ -72,8 +71,9 @@ func NewTest(v validator.Validator, e *env.Env, t *testing.T) *App {
 	loginUseCase := auth.NewLoginUseCase(v, jwt)
 	authHandler := handler.NewAuthHandler(loginUseCase)
 	redisCache := rediscache.NewRedisCache(e)
-	mockFlightAPI := mockflightapi.NewMockFlightAPI(t)
-	v2 := mockflightapi.NewMockFlightAPIs(mockFlightAPI)
+	amadeusAPI := amadeusapi.NewAmadeusAPI(e)
+	serpAPI := serpapi.NewSerpAPI(e)
+	v2 := flightapi.NewFlightAPIs(amadeusAPI, serpAPI)
 	searchFlightUseCase := flight.NewSearchFlightUseCase(v, redisCache, v2)
 	flightHandler := handler.NewFlightHandler(searchFlightUseCase)
 	routerRouter := router.NewRouter(e, middlewareMiddleware, healthHandler, docHandler, authHandler, flightHandler)

@@ -18,10 +18,8 @@ import (
 	"github.com/danielmesquitta/flight-api/internal/provider/cache/rediscache"
 	"github.com/danielmesquitta/flight-api/internal/provider/flightapi"
 	"github.com/danielmesquitta/flight-api/internal/provider/flightapi/amadeusapi"
-	"github.com/danielmesquitta/flight-api/internal/provider/flightapi/mockflightapi"
 	"github.com/danielmesquitta/flight-api/internal/provider/flightapi/serpapi"
 	"github.com/google/wire"
-	"github.com/stretchr/testify/mock"
 	"testing"
 )
 
@@ -32,10 +30,11 @@ func NewDev(
 	t *testing.T,
 ) *App {
 	wire.Build(
+		// Add any development-specific providers here
+		jwtutil.NewJWT,
 		amadeusapi.NewAmadeusAPI,
 		serpapi.NewSerpAPI,
 		flightapi.NewFlightAPIs,
-		jwtutil.NewJWT,
 		wire.Bind(new(cache.Cache), new(*rediscache.RedisCache)),
 		rediscache.NewRedisCache,
 		flight.NewSearchFlightUseCase,
@@ -58,10 +57,11 @@ func NewStaging(
 	t *testing.T,
 ) *App {
 	wire.Build(
+		// Add any staging-specific providers here
+		jwtutil.NewJWT,
 		amadeusapi.NewAmadeusAPI,
 		serpapi.NewSerpAPI,
 		flightapi.NewFlightAPIs,
-		jwtutil.NewJWT,
 		wire.Bind(new(cache.Cache), new(*rediscache.RedisCache)),
 		rediscache.NewRedisCache,
 		flight.NewSearchFlightUseCase,
@@ -84,13 +84,11 @@ func NewTest(
 	t *testing.T,
 ) *App {
 	wire.Build(
-		wire.Bind(new(interface {
-			mock.TestingT
-			Cleanup(func())
-		}), new(*testing.T)),
-		mockflightapi.NewMockFlightAPI,
-		mockflightapi.NewMockFlightAPIs,
+		// Add any test-specific providers here
 		jwtutil.NewJWT,
+		amadeusapi.NewAmadeusAPI,
+		serpapi.NewSerpAPI,
+		flightapi.NewFlightAPIs,
 		wire.Bind(new(cache.Cache), new(*rediscache.RedisCache)),
 		rediscache.NewRedisCache,
 		flight.NewSearchFlightUseCase,
@@ -113,10 +111,11 @@ func NewProd(
 	t *testing.T,
 ) *App {
 	wire.Build(
+		// Add any production-specific providers here
+		jwtutil.NewJWT,
 		amadeusapi.NewAmadeusAPI,
 		serpapi.NewSerpAPI,
 		flightapi.NewFlightAPIs,
-		jwtutil.NewJWT,
 		wire.Bind(new(cache.Cache), new(*rediscache.RedisCache)),
 		rediscache.NewRedisCache,
 		flight.NewSearchFlightUseCase,

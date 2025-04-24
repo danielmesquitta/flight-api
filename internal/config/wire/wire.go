@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	"github.com/google/wire"
-	"github.com/stretchr/testify/mock"
 
 	"github.com/danielmesquitta/flight-api/internal/app/server"
 	"github.com/danielmesquitta/flight-api/internal/app/server/handler"
@@ -19,7 +18,6 @@ import (
 	"github.com/danielmesquitta/flight-api/internal/provider/cache/rediscache"
 	"github.com/danielmesquitta/flight-api/internal/provider/flightapi"
 	"github.com/danielmesquitta/flight-api/internal/provider/flightapi/amadeusapi"
-	"github.com/danielmesquitta/flight-api/internal/provider/flightapi/mockflightapi"
 	"github.com/danielmesquitta/flight-api/internal/provider/flightapi/serpapi"
 )
 
@@ -42,6 +40,10 @@ func params(
 var providers = []any{
 	jwtutil.NewJWT,
 
+	amadeusapi.NewAmadeusAPI,
+	serpapi.NewSerpAPI,
+	flightapi.NewFlightAPIs,
+
 	wire.Bind(new(cache.Cache), new(*rediscache.RedisCache)),
 	rediscache.NewRedisCache,
 
@@ -61,28 +63,17 @@ var providers = []any{
 }
 
 var devProviders = []any{
-	amadeusapi.NewAmadeusAPI,
-	serpapi.NewSerpAPI,
-	flightapi.NewFlightAPIs,
+	// Add any development-specific providers here
 }
 
 var testProviders = []any{
-	wire.Bind(new(interface {
-		mock.TestingT
-		Cleanup(func())
-	}), new(*testing.T)),
-	mockflightapi.NewMockFlightAPI,
-	mockflightapi.NewMockFlightAPIs,
+	// Add any test-specific providers here
 }
 
 var stagingProviders = []any{
-	amadeusapi.NewAmadeusAPI,
-	serpapi.NewSerpAPI,
-	flightapi.NewFlightAPIs,
+	// Add any staging-specific providers here
 }
 
 var prodProviders = []any{
-	amadeusapi.NewAmadeusAPI,
-	serpapi.NewSerpAPI,
-	flightapi.NewFlightAPIs,
+	// Add any production-specific providers here
 }

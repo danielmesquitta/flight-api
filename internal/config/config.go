@@ -8,9 +8,8 @@ import (
 )
 
 func LoadConfig(v validator.Validator) *env.Env {
-	e := env.NewEnv(v)
-	log.SetDefaultLogger(e)
+	log.SetDefaultLogger()
 	time.SetServerTimeZone()
 
-	return e
+	return env.NewEnv(v)
 }

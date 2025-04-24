@@ -35,11 +35,11 @@ func NewSearchFlightUseCase(
 }
 
 type SearchFlightUseCaseInput struct {
-	Origin      string    `json:"origin"               validate:"required,len=3"`
-	Destination string    `json:"destination"          validate:"required,len=3"`
-	Date        time.Time `json:"date"                 validate:"required"`
-	SortBy      string    `json:"sort_by,omitempty"    validate:"omitempty,oneof=price duration departure"`
-	SortOrder   string    `json:"sort_order,omitempty" validate:"omitempty,oneof=asc desc"`
+	Origin      string    `json:"origin"      validate:"required,len=3"`
+	Destination string    `json:"destination" validate:"required,len=3"`
+	Date        time.Time `json:"date"        validate:"required"`
+	SortBy      string    `json:"sort_by"     validate:"omitempty,oneof=price duration departure"`
+	SortOrder   string    `json:"sort_order"  validate:"omitempty,oneof=asc desc"`
 }
 
 type SearchFlightUseCaseOutput struct {
@@ -139,8 +139,7 @@ func (s *SearchFlightUseCase) setFastestAndCheapest(
 			cheapest = flight
 		}
 
-		duration := flight.ArrivalAt.Sub(flight.DepartureAt)
-		if fastest == nil || duration < fastest.ArrivalAt.Sub(fastest.DepartureAt) {
+		if fastest == nil || flight.Duration < fastest.Duration {
 			fastest = flight
 		}
 	}
@@ -161,9 +160,7 @@ func (s *SearchFlightUseCase) sortFlights(
 		var less bool
 		switch sortBy {
 		case "duration":
-			di := flights[i].ArrivalAt.Sub(flights[i].DepartureAt)
-			dj := flights[j].ArrivalAt.Sub(flights[j].DepartureAt)
-			less = di < dj
+			less = flights[i].Duration < flights[j].Duration
 
 		case "departure":
 			less = flights[i].DepartureAt.Before(flights[j].DepartureAt)
