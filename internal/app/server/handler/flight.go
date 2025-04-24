@@ -28,6 +28,8 @@ func NewFlightHandler(
 // @Param origin query string true "Origin airport code"
 // @Param destination query string true "Destination airport code"
 // @Param date query string true "Departure date (YYYY-MM-DD)"
+// @Param sort_by query string false "Sort by field (price or duration)"
+// @Param sort_order query string false "Sort order (asc or desc)"
 // @Success 200 {object} dto.FlightSearchResponse
 // @Failure 400 {object} dto.ErrorResponse
 // @Failure 401 {object} dto.ErrorResponse
@@ -37,16 +39,19 @@ func NewFlightHandler(
 func (h *FlightHandler) Search(c *fiber.Ctx) error {
 	origin := c.Query(QueryParamOrigin)
 	destination := c.Query(QueryParamDestination)
-
 	date, err := parseDateQueryParam(c, QueryParamDate)
 	if err != nil {
 		return errs.New(err)
 	}
+	sortBy := c.Query(QueryParamSortBy)
+	sortOrder := c.Query(QueryParamSortOrder)
 
 	in := flight.SearchFlightUseCaseInput{
 		Origin:      origin,
 		Destination: destination,
 		Date:        date,
+		SortBy:      sortBy,
+		SortOrder:   sortOrder,
 	}
 
 	out, err := h.sfuc.Execute(c.UserContext(), in)

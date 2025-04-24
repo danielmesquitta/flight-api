@@ -14,3 +14,6 @@ packages:
   github.com/danielmesquitta/flight-api/internal/provider/flightapi:
     config:
       all: true
+  github.com/danielmesquitta/flight-api/internal/provider/cache:
+    config:
+      all: true

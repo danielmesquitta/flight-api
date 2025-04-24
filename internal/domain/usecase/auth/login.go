@@ -21,8 +21,8 @@ func NewLoginUseCase(
 }
 
 type LoginUseCaseInput struct {
-	Email    string `json:"username"`
-	Password string `json:"password"`
+	Email    string `json:"username" validate:"required,email"`
+	Password string `json:"password" validate:"required"`
 }
 
 type LoginUseCaseOutput struct {

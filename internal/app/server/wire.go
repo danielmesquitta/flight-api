@@ -25,6 +25,58 @@ import (
 	"testing"
 )
 
+// NewDev wires up the application in dev mode.
+func NewDev(
+	v validator.Validator,
+	e *env.Env,
+	t *testing.T,
+) *App {
+	wire.Build(
+		amadeusapi.NewAmadeusAPI,
+		serpapi.NewSerpAPI,
+		flightapi.NewFlightAPIs,
+		jwtutil.NewJWT,
+		wire.Bind(new(cache.Cache), new(*rediscache.RedisCache)),
+		rediscache.NewRedisCache,
+		flight.NewSearchFlightUseCase,
+		auth.NewLoginUseCase,
+		handler.NewDocHandler,
+		handler.NewHealthHandler,
+		handler.NewFlightHandler,
+		handler.NewAuthHandler,
+		middleware.NewMiddleware,
+		router.NewRouter,
+		Build,
+	)
+	return &App{}
+}
+
+// NewStaging wires up the application in staging mode.
+func NewStaging(
+	v validator.Validator,
+	e *env.Env,
+	t *testing.T,
+) *App {
+	wire.Build(
+		amadeusapi.NewAmadeusAPI,
+		serpapi.NewSerpAPI,
+		flightapi.NewFlightAPIs,
+		jwtutil.NewJWT,
+		wire.Bind(new(cache.Cache), new(*rediscache.RedisCache)),
+		rediscache.NewRedisCache,
+		flight.NewSearchFlightUseCase,
+		auth.NewLoginUseCase,
+		handler.NewDocHandler,
+		handler.NewHealthHandler,
+		handler.NewFlightHandler,
+		handler.NewAuthHandler,
+		middleware.NewMiddleware,
+		router.NewRouter,
+		Build,
+	)
+	return &App{}
+}
+
 // NewTest wires up the application in test mode.
 func NewTest(
 	v validator.Validator,
@@ -56,58 +108,6 @@ func NewTest(
 
 // NewProd wires up the application in prod mode.
 func NewProd(
-	v validator.Validator,
-	e *env.Env,
-	t *testing.T,
-) *App {
-	wire.Build(
-		amadeusapi.NewAmadeusAPI,
-		serpapi.NewSerpAPI,
-		flightapi.NewFlightAPIs,
-		jwtutil.NewJWT,
-		wire.Bind(new(cache.Cache), new(*rediscache.RedisCache)),
-		rediscache.NewRedisCache,
-		flight.NewSearchFlightUseCase,
-		auth.NewLoginUseCase,
-		handler.NewDocHandler,
-		handler.NewHealthHandler,
-		handler.NewFlightHandler,
-		handler.NewAuthHandler,
-		middleware.NewMiddleware,
-		router.NewRouter,
-		Build,
-	)
-	return &App{}
-}
-
-// NewDev wires up the application in dev mode.
-func NewDev(
-	v validator.Validator,
-	e *env.Env,
-	t *testing.T,
-) *App {
-	wire.Build(
-		amadeusapi.NewAmadeusAPI,
-		serpapi.NewSerpAPI,
-		flightapi.NewFlightAPIs,
-		jwtutil.NewJWT,
-		wire.Bind(new(cache.Cache), new(*rediscache.RedisCache)),
-		rediscache.NewRedisCache,
-		flight.NewSearchFlightUseCase,
-		auth.NewLoginUseCase,
-		handler.NewDocHandler,
-		handler.NewHealthHandler,
-		handler.NewFlightHandler,
-		handler.NewAuthHandler,
-		middleware.NewMiddleware,
-		router.NewRouter,
-		Build,
-	)
-	return &App{}
-}
-
-// NewStaging wires up the application in staging mode.
-func NewStaging(
 	v validator.Validator,
 	e *env.Env,
 	t *testing.T,

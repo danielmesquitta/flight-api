@@ -17,6 +17,8 @@ const (
 	QueryParamOrigin      QueryParam = "origin"
 	QueryParamDestination QueryParam = "destination"
 	QueryParamDate        QueryParam = "date"
+	QueryParamSortBy      QueryParam = "sort_by"
+	QueryParamSortOrder   QueryParam = "sort_order"
 )
 
 func parseDateQueryParam(

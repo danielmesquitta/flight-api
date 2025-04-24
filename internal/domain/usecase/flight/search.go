@@ -3,6 +3,7 @@ package flight
 import (
 	"context"
 	"log/slog"
+	"sort"
 	"time"
 
 	"github.com/danielmesquitta/flight-api/internal/domain/entity"
@@ -32,9 +33,11 @@ func NewSearchFlightUseCase(
 }
 
 type SearchFlightUseCaseInput struct {
-	Origin      string    `json:"origin"      validate:"required,len=3"`
-	Destination string    `json:"destination" validate:"required,len=3"`
-	Date        time.Time `json:"date"        validate:"required"`
+	Origin      string    `json:"origin"               validate:"required,len=3"`
+	Destination string    `json:"destination"          validate:"required,len=3"`
+	Date        time.Time `json:"date"                 validate:"required"`
+	SortBy      string    `json:"sort_by,omitempty"    validate:"omitempty,oneof=price duration"`
+	SortOrder   string    `json:"sort_order,omitempty" validate:"omitempty,oneof=asc desc"`
 }
 
 type SearchFlightUseCaseOutput struct {
@@ -96,6 +99,8 @@ func (s *SearchFlightUseCase) Execute(
 
 	s.setFastestAndCheapest(allFlights)
 
+	s.sortFlights(allFlights, in.SortBy, in.SortOrder)
+
 	out = &SearchFlightUseCaseOutput{
 		Data: allFlights,
 	}
@@ -134,4 +139,26 @@ func (s *SearchFlightUseCase) setFastestAndCheapest(
 	if fastest != nil {
 		fastest.IsFastest = true
 	}
+}
+
+func (s *SearchFlightUseCase) sortFlights(
+	flights []entity.Flight,
+	sortBy, sortOrder string,
+) {
+	sort.Slice(flights, func(i, j int) bool {
+		var less bool
+		switch sortBy {
+		case "duration":
+			di := flights[i].ArrivalAt.Sub(flights[i].DepartureAt)
+			dj := flights[j].ArrivalAt.Sub(flights[j].DepartureAt)
+			less = di < dj
+
+		default: // "price"
+			less = flights[i].Price < flights[j].Price
+		}
+		if sortOrder == "desc" {
+			return !less
+		}
+		return less
+	})
 }

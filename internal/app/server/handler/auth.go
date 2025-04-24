@@ -19,8 +19,8 @@ func NewAuthHandler(
 	}
 }
 
-// @Summary Auth search
-// @Description Search for flights based on origin, destination, and date
+// @Summary Login
+// @Description Use e-mail and password to login
 // @Tags Auth
 // @Accept json
 // @Produce json

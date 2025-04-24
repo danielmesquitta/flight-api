@@ -54,6 +54,10 @@
                         "type": "string"
                     }
                 },
+                "required": [
+                    "password",
+                    "username"
+                ],
                 "type": "object"
             },
             "dto.LoginResponse": {
@@ -157,7 +161,7 @@
         },
         "/v1/auth/login": {
             "post": {
-                "description": "Search for flights based on origin, destination, and date",
+                "description": "Use e-mail and password to login",
                 "requestBody": {
                     "content": {
                         "application/json": {
@@ -222,7 +226,7 @@
                         "description": "Internal Server Error"
                     }
                 },
-                "summary": "Auth search",
+                "summary": "Login",
                 "tags": [
                     "Auth"
                 ]
@@ -255,6 +259,22 @@
                         "in": "query",
                         "name": "date",
                         "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Sort by field (price or duration)",
+                        "in": "query",
+                        "name": "sort_by",
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "description": "Sort order (asc or desc)",
+                        "in": "query",
+                        "name": "sort_order",
                         "schema": {
                             "type": "string"
                         }
