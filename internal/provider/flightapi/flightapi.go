@@ -6,6 +6,7 @@ import (
 
 	"github.com/danielmesquitta/flight-api/internal/domain/entity"
 	"github.com/danielmesquitta/flight-api/internal/provider/flightapi/amadeusapi"
+	"github.com/danielmesquitta/flight-api/internal/provider/flightapi/duffelapi"
 	"github.com/danielmesquitta/flight-api/internal/provider/flightapi/serpapi"
 )
 
@@ -20,9 +21,11 @@ type FlightAPI interface {
 func NewFlightAPIs(
 	a *amadeusapi.AmadeusAPI,
 	s *serpapi.SerpAPI,
+	d *duffelapi.DuffelAPI,
 ) []FlightAPI {
 	return []FlightAPI{
 		a,
 		s,
+		d,
 	}
 }

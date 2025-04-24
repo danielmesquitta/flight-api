@@ -45,9 +45,9 @@ func (a *SerpAPI) SearchFlights(
 			"departure_id":  origin,
 			"arrival_id":    destination,
 			"outbound_date": date.Format(time.DateOnly),
+			// Assuming a 7-day return, since return_date is required
 			"return_date": date.AddDate(0, 0, 7).
 				Format(time.DateOnly),
-			// Assuming a 7-day return
 		}).
 		Get("/")
 	if err != nil {

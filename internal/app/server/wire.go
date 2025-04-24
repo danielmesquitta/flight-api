@@ -18,64 +18,11 @@ import (
 	"github.com/danielmesquitta/flight-api/internal/provider/cache/rediscache"
 	"github.com/danielmesquitta/flight-api/internal/provider/flightapi"
 	"github.com/danielmesquitta/flight-api/internal/provider/flightapi/amadeusapi"
+	"github.com/danielmesquitta/flight-api/internal/provider/flightapi/duffelapi"
 	"github.com/danielmesquitta/flight-api/internal/provider/flightapi/serpapi"
 	"github.com/google/wire"
 	"testing"
 )
-
-// NewDev wires up the application in dev mode.
-func NewDev(
-	v validator.Validator,
-	e *env.Env,
-	t *testing.T,
-) *App {
-	wire.Build(
-		// Add any development-specific providers here
-		jwtutil.NewJWT,
-		amadeusapi.NewAmadeusAPI,
-		serpapi.NewSerpAPI,
-		flightapi.NewFlightAPIs,
-		wire.Bind(new(cache.Cache), new(*rediscache.RedisCache)),
-		rediscache.NewRedisCache,
-		flight.NewSearchFlightsUseCase,
-		auth.NewLoginUseCase,
-		handler.NewDocHandler,
-		handler.NewHealthHandler,
-		handler.NewFlightHandler,
-		handler.NewAuthHandler,
-		middleware.NewMiddleware,
-		router.NewRouter,
-		Build,
-	)
-	return &App{}
-}
-
-// NewStaging wires up the application in staging mode.
-func NewStaging(
-	v validator.Validator,
-	e *env.Env,
-	t *testing.T,
-) *App {
-	wire.Build(
-		// Add any staging-specific providers here
-		jwtutil.NewJWT,
-		amadeusapi.NewAmadeusAPI,
-		serpapi.NewSerpAPI,
-		flightapi.NewFlightAPIs,
-		wire.Bind(new(cache.Cache), new(*rediscache.RedisCache)),
-		rediscache.NewRedisCache,
-		flight.NewSearchFlightsUseCase,
-		auth.NewLoginUseCase,
-		handler.NewDocHandler,
-		handler.NewHealthHandler,
-		handler.NewFlightHandler,
-		handler.NewAuthHandler,
-		middleware.NewMiddleware,
-		router.NewRouter,
-		Build,
-	)
-	return &App{}
-}
 
 // NewTest wires up the application in test mode.
 func NewTest(
@@ -88,6 +35,7 @@ func NewTest(
 		jwtutil.NewJWT,
 		amadeusapi.NewAmadeusAPI,
 		serpapi.NewSerpAPI,
+		duffelapi.NewDuffelAPI,
 		flightapi.NewFlightAPIs,
 		wire.Bind(new(cache.Cache), new(*rediscache.RedisCache)),
 		rediscache.NewRedisCache,
@@ -115,6 +63,63 @@ func NewProd(
 		jwtutil.NewJWT,
 		amadeusapi.NewAmadeusAPI,
 		serpapi.NewSerpAPI,
+		duffelapi.NewDuffelAPI,
+		flightapi.NewFlightAPIs,
+		wire.Bind(new(cache.Cache), new(*rediscache.RedisCache)),
+		rediscache.NewRedisCache,
+		flight.NewSearchFlightsUseCase,
+		auth.NewLoginUseCase,
+		handler.NewDocHandler,
+		handler.NewHealthHandler,
+		handler.NewFlightHandler,
+		handler.NewAuthHandler,
+		middleware.NewMiddleware,
+		router.NewRouter,
+		Build,
+	)
+	return &App{}
+}
+
+// NewDev wires up the application in dev mode.
+func NewDev(
+	v validator.Validator,
+	e *env.Env,
+	t *testing.T,
+) *App {
+	wire.Build(
+		// Add any development-specific providers here
+		jwtutil.NewJWT,
+		amadeusapi.NewAmadeusAPI,
+		serpapi.NewSerpAPI,
+		duffelapi.NewDuffelAPI,
+		flightapi.NewFlightAPIs,
+		wire.Bind(new(cache.Cache), new(*rediscache.RedisCache)),
+		rediscache.NewRedisCache,
+		flight.NewSearchFlightsUseCase,
+		auth.NewLoginUseCase,
+		handler.NewDocHandler,
+		handler.NewHealthHandler,
+		handler.NewFlightHandler,
+		handler.NewAuthHandler,
+		middleware.NewMiddleware,
+		router.NewRouter,
+		Build,
+	)
+	return &App{}
+}
+
+// NewStaging wires up the application in staging mode.
+func NewStaging(
+	v validator.Validator,
+	e *env.Env,
+	t *testing.T,
+) *App {
+	wire.Build(
+		// Add any staging-specific providers here
+		jwtutil.NewJWT,
+		amadeusapi.NewAmadeusAPI,
+		serpapi.NewSerpAPI,
+		duffelapi.NewDuffelAPI,
 		flightapi.NewFlightAPIs,
 		wire.Bind(new(cache.Cache), new(*rediscache.RedisCache)),
 		rediscache.NewRedisCache,

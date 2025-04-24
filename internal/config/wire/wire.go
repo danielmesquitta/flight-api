@@ -18,6 +18,7 @@ import (
 	"github.com/danielmesquitta/flight-api/internal/provider/cache/rediscache"
 	"github.com/danielmesquitta/flight-api/internal/provider/flightapi"
 	"github.com/danielmesquitta/flight-api/internal/provider/flightapi/amadeusapi"
+	"github.com/danielmesquitta/flight-api/internal/provider/flightapi/duffelapi"
 	"github.com/danielmesquitta/flight-api/internal/provider/flightapi/serpapi"
 )
 
@@ -42,6 +43,7 @@ var providers = []any{
 
 	amadeusapi.NewAmadeusAPI,
 	serpapi.NewSerpAPI,
+	duffelapi.NewDuffelAPI,
 	flightapi.NewFlightAPIs,
 
 	wire.Bind(new(cache.Cache), new(*rediscache.RedisCache)),
