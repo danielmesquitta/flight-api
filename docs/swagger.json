@@ -212,17 +212,6 @@
                 }
             }
         },
-        "dto.SearchFlightsResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/entity.Flight"
-                    }
-                }
-            }
-        },
         "dto.HealthResponse": {
             "type": "object",
             "properties": {
@@ -234,14 +223,14 @@
         "dto.LoginRequest": {
             "type": "object",
             "required": [
-                "password",
-                "username"
+                "email",
+                "password"
             ],
             "properties": {
-                "password": {
+                "email": {
                     "type": "string"
                 },
-                "username": {
+                "password": {
                     "type": "string"
                 }
             }
@@ -251,6 +240,17 @@
             "properties": {
                 "access_token": {
                     "type": "string"
+                }
+            }
+        },
+        "dto.SearchFlightsResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.Flight"
+                    }
                 }
             }
         },

@@ -26,17 +26,6 @@
                 },
                 "type": "object"
             },
-            "dto.SearchFlightsResponse": {
-                "properties": {
-                    "data": {
-                        "items": {
-                            "$ref": "#/components/schemas/entity.Flight"
-                        },
-                        "type": "array"
-                    }
-                },
-                "type": "object"
-            },
             "dto.HealthResponse": {
                 "properties": {
                     "status": {
@@ -47,16 +36,16 @@
             },
             "dto.LoginRequest": {
                 "properties": {
-                    "password": {
+                    "email": {
                         "type": "string"
                     },
-                    "username": {
+                    "password": {
                         "type": "string"
                     }
                 },
                 "required": [
-                    "password",
-                    "username"
+                    "email",
+                    "password"
                 ],
                 "type": "object"
             },
@@ -64,6 +53,17 @@
                 "properties": {
                     "access_token": {
                         "type": "string"
+                    }
+                },
+                "type": "object"
+            },
+            "dto.SearchFlightsResponse": {
+                "properties": {
+                    "data": {
+                        "items": {
+                            "$ref": "#/components/schemas/entity.Flight"
+                        },
+                        "type": "array"
                     }
                 },
                 "type": "object"

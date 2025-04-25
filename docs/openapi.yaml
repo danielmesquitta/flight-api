@@ -1,218 +1,218 @@
 components:
-  schemas:
-    dto.ErrorItem:
-      properties:
-        name:
-          type: string
-        reason:
-          type: string
-      type: object
-    dto.ErrorResponse:
-      properties:
-        errors:
-          items:
-            $ref: "#/components/schemas/dto.ErrorItem"
-          type: array
-        message:
-          type: string
-      type: object
-    dto.SearchFlightsResponse:
-      properties:
-        data:
-          items:
-            $ref: "#/components/schemas/entity.Flight"
-          type: array
-      type: object
-    dto.HealthResponse:
-      properties:
-        status:
-          type: string
-      type: object
-    dto.LoginRequest:
-      properties:
-        password:
-          type: string
-        username:
-          type: string
-      required:
-        - password
-        - username
-      type: object
-    dto.LoginResponse:
-      properties:
-        access_token:
-          type: string
-      type: object
-    entity.Flight:
-      properties:
-        arrival_at:
-          type: string
-        departure_at:
-          type: string
-        destination:
-          type: string
-        duration:
-          type: integer
-        flight_number:
-          type: string
-        id:
-          type: string
-        is_cheapest:
-          type: boolean
-        is_fastest:
-          type: boolean
-        origin:
-          type: string
-        price:
-          type: integer
-      type: object
-  securitySchemes:
-    BasicAuth:
-      scheme: basic
-      type: http
-    BearerAuth:
-      description: Type "Bearer" followed by a space and JWT token.
-      in: header
-      name: Authorization
-      type: apiKey
+    schemas:
+        dto.ErrorItem:
+            properties:
+                name:
+                    type: string
+                reason:
+                    type: string
+            type: object
+        dto.ErrorResponse:
+            properties:
+                errors:
+                    items:
+                        $ref: '#/components/schemas/dto.ErrorItem'
+                    type: array
+                message:
+                    type: string
+            type: object
+        dto.HealthResponse:
+            properties:
+                status:
+                    type: string
+            type: object
+        dto.LoginRequest:
+            properties:
+                email:
+                    type: string
+                password:
+                    type: string
+            required:
+                - email
+                - password
+            type: object
+        dto.LoginResponse:
+            properties:
+                access_token:
+                    type: string
+            type: object
+        dto.SearchFlightsResponse:
+            properties:
+                data:
+                    items:
+                        $ref: '#/components/schemas/entity.Flight'
+                    type: array
+            type: object
+        entity.Flight:
+            properties:
+                arrival_at:
+                    type: string
+                departure_at:
+                    type: string
+                destination:
+                    type: string
+                duration:
+                    type: integer
+                flight_number:
+                    type: string
+                id:
+                    type: string
+                is_cheapest:
+                    type: boolean
+                is_fastest:
+                    type: boolean
+                origin:
+                    type: string
+                price:
+                    type: integer
+            type: object
+    securitySchemes:
+        BasicAuth:
+            scheme: basic
+            type: http
+        BearerAuth:
+            description: Type "Bearer" followed by a space and JWT token.
+            in: header
+            name: Authorization
+            type: apiKey
 info:
-  contact:
-    email: danielmesquitta123@gmail.com
-    name: Daniel Mesquita
-  description: Flight API
-  title: Flight API
-  version: "1.0"
+    contact:
+        email: danielmesquitta123@gmail.com
+        name: Daniel Mesquita
+    description: Flight API
+    title: Flight API
+    version: "1.0"
 openapi: 3.0.3
 paths:
-  /health:
-    get:
-      description: Health check
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/dto.HealthResponse"
-          description: OK
-        "500":
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/dto.ErrorResponse"
-          description: Internal Server Error
-      summary: Health check
-      tags:
-        - Health
-  /v1/auth/login:
-    post:
-      description: Use e-mail and password to login
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/dto.LoginRequest"
-        description: Request body
-        required: true
-        x-originalParamName: request
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/dto.LoginResponse"
-          description: OK
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/dto.ErrorResponse"
-          description: Bad Request
-        "401":
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/dto.ErrorResponse"
-          description: Unauthorized
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/dto.ErrorResponse"
-          description: Not Found
-        "500":
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/dto.ErrorResponse"
-          description: Internal Server Error
-      summary: Login
-      tags:
-        - Auth
-  /v1/flights/search:
-    get:
-      description: Search for flights based on origin, destination, and date
-      parameters:
-        - description: Origin airport code
-          in: query
-          name: origin
-          required: true
-          schema:
-            type: string
-        - description: Destination airport code
-          in: query
-          name: destination
-          required: true
-          schema:
-            type: string
-        - description: Departure date (YYYY-MM-DD)
-          in: query
-          name: date
-          required: true
-          schema:
-            type: string
-        - description: Sort by field (price or duration)
-          in: query
-          name: sort_by
-          schema:
-            type: string
-        - description: Sort order (asc or desc)
-          in: query
-          name: sort_order
-          schema:
-            type: string
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/dto.SearchFlightsResponse"
-          description: OK
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/dto.ErrorResponse"
-          description: Bad Request
-        "401":
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/dto.ErrorResponse"
-          description: Unauthorized
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/dto.ErrorResponse"
-          description: Not Found
-        "500":
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/dto.ErrorResponse"
-          description: Internal Server Error
-      security:
-        - BearerAuth: []
-      summary: Flight search
-      tags:
-        - Flight
+    /health:
+        get:
+            description: Health check
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/dto.HealthResponse'
+                    description: OK
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/dto.ErrorResponse'
+                    description: Internal Server Error
+            summary: Health check
+            tags:
+                - Health
+    /v1/auth/login:
+        post:
+            description: Use e-mail and password to login
+            requestBody:
+                content:
+                    application/json:
+                        schema:
+                            $ref: '#/components/schemas/dto.LoginRequest'
+                description: Request body
+                required: true
+                x-originalParamName: request
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/dto.LoginResponse'
+                    description: OK
+                "400":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/dto.ErrorResponse'
+                    description: Bad Request
+                "401":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/dto.ErrorResponse'
+                    description: Unauthorized
+                "404":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/dto.ErrorResponse'
+                    description: Not Found
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/dto.ErrorResponse'
+                    description: Internal Server Error
+            summary: Login
+            tags:
+                - Auth
+    /v1/flights/search:
+        get:
+            description: Search for flights based on origin, destination, and date
+            parameters:
+                - description: Origin airport code
+                  in: query
+                  name: origin
+                  required: true
+                  schema:
+                    type: string
+                - description: Destination airport code
+                  in: query
+                  name: destination
+                  required: true
+                  schema:
+                    type: string
+                - description: Departure date (YYYY-MM-DD)
+                  in: query
+                  name: date
+                  required: true
+                  schema:
+                    type: string
+                - description: Sort by field (price or duration)
+                  in: query
+                  name: sort_by
+                  schema:
+                    type: string
+                - description: Sort order (asc or desc)
+                  in: query
+                  name: sort_order
+                  schema:
+                    type: string
+            responses:
+                "200":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/dto.SearchFlightsResponse'
+                    description: OK
+                "400":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/dto.ErrorResponse'
+                    description: Bad Request
+                "401":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/dto.ErrorResponse'
+                    description: Unauthorized
+                "404":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/dto.ErrorResponse'
+                    description: Not Found
+                "500":
+                    content:
+                        application/json:
+                            schema:
+                                $ref: '#/components/schemas/dto.ErrorResponse'
+                    description: Internal Server Error
+            security:
+                - BearerAuth: []
+            summary: Flight search
+            tags:
+                - Flight

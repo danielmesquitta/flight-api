@@ -11,17 +11,10 @@ definitions:
     properties:
       errors:
         items:
-          $ref: "#/definitions/dto.ErrorItem"
+          $ref: '#/definitions/dto.ErrorItem'
         type: array
       message:
         type: string
-    type: object
-  dto.SearchFlightsResponse:
-    properties:
-      data:
-        items:
-          $ref: "#/definitions/entity.Flight"
-        type: array
     type: object
   dto.HealthResponse:
     properties:
@@ -30,18 +23,25 @@ definitions:
     type: object
   dto.LoginRequest:
     properties:
+      email:
+        type: string
       password:
         type: string
-      username:
-        type: string
     required:
-      - password
-      - username
+    - email
+    - password
     type: object
   dto.LoginResponse:
     properties:
       access_token:
         type: string
+    type: object
+  dto.SearchFlightsResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/entity.Flight'
+        type: array
     type: object
   entity.Flight:
     properties:
@@ -77,117 +77,117 @@ paths:
   /health:
     get:
       consumes:
-        - application/json
+      - application/json
       description: Health check
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: "#/definitions/dto.HealthResponse"
+            $ref: '#/definitions/dto.HealthResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: "#/definitions/dto.ErrorResponse"
+            $ref: '#/definitions/dto.ErrorResponse'
       summary: Health check
       tags:
-        - Health
+      - Health
   /v1/auth/login:
     post:
       consumes:
-        - application/json
+      - application/json
       description: Use e-mail and password to login
       parameters:
-        - description: Request body
-          in: body
-          name: request
-          required: true
-          schema:
-            $ref: "#/definitions/dto.LoginRequest"
+      - description: Request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/dto.LoginRequest'
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: "#/definitions/dto.LoginResponse"
+            $ref: '#/definitions/dto.LoginResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: "#/definitions/dto.ErrorResponse"
+            $ref: '#/definitions/dto.ErrorResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: "#/definitions/dto.ErrorResponse"
+            $ref: '#/definitions/dto.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: "#/definitions/dto.ErrorResponse"
+            $ref: '#/definitions/dto.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: "#/definitions/dto.ErrorResponse"
+            $ref: '#/definitions/dto.ErrorResponse'
       summary: Login
       tags:
-        - Auth
+      - Auth
   /v1/flights/search:
     get:
       consumes:
-        - application/json
+      - application/json
       description: Search for flights based on origin, destination, and date
       parameters:
-        - description: Origin airport code
-          in: query
-          name: origin
-          required: true
-          type: string
-        - description: Destination airport code
-          in: query
-          name: destination
-          required: true
-          type: string
-        - description: Departure date (YYYY-MM-DD)
-          in: query
-          name: date
-          required: true
-          type: string
-        - description: Sort by field (price or duration)
-          in: query
-          name: sort_by
-          type: string
-        - description: Sort order (asc or desc)
-          in: query
-          name: sort_order
-          type: string
+      - description: Origin airport code
+        in: query
+        name: origin
+        required: true
+        type: string
+      - description: Destination airport code
+        in: query
+        name: destination
+        required: true
+        type: string
+      - description: Departure date (YYYY-MM-DD)
+        in: query
+        name: date
+        required: true
+        type: string
+      - description: Sort by field (price or duration)
+        in: query
+        name: sort_by
+        type: string
+      - description: Sort order (asc or desc)
+        in: query
+        name: sort_order
+        type: string
       produces:
-        - application/json
+      - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: "#/definitions/dto.SearchFlightsResponse"
+            $ref: '#/definitions/dto.SearchFlightsResponse'
         "400":
           description: Bad Request
           schema:
-            $ref: "#/definitions/dto.ErrorResponse"
+            $ref: '#/definitions/dto.ErrorResponse'
         "401":
           description: Unauthorized
           schema:
-            $ref: "#/definitions/dto.ErrorResponse"
+            $ref: '#/definitions/dto.ErrorResponse'
         "404":
           description: Not Found
           schema:
-            $ref: "#/definitions/dto.ErrorResponse"
+            $ref: '#/definitions/dto.ErrorResponse'
         "500":
           description: Internal Server Error
           schema:
-            $ref: "#/definitions/dto.ErrorResponse"
+            $ref: '#/definitions/dto.ErrorResponse'
       security:
-        - BearerAuth: []
+      - BearerAuth: []
       summary: Flight search
       tags:
-        - Flight
+      - Flight
 securityDefinitions:
   BasicAuth:
     type: basic

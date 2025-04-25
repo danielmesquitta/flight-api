@@ -219,17 +219,6 @@ const docTemplate = `{
                 }
             }
         },
-        "dto.SearchFlightsResponse": {
-            "type": "object",
-            "properties": {
-                "data": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/entity.Flight"
-                    }
-                }
-            }
-        },
         "dto.HealthResponse": {
             "type": "object",
             "properties": {
@@ -241,14 +230,14 @@ const docTemplate = `{
         "dto.LoginRequest": {
             "type": "object",
             "required": [
-                "password",
-                "username"
+                "email",
+                "password"
             ],
             "properties": {
-                "password": {
+                "email": {
                     "type": "string"
                 },
-                "username": {
+                "password": {
                     "type": "string"
                 }
             }
@@ -258,6 +247,17 @@ const docTemplate = `{
             "properties": {
                 "access_token": {
                     "type": "string"
+                }
+            }
+        },
+        "dto.SearchFlightsResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/entity.Flight"
+                    }
                 }
             }
         },

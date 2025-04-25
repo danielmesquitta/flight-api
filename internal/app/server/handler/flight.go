@@ -1,8 +1,6 @@
 package handler
 
 import (
-	"log/slog"
-
 	"github.com/danielmesquitta/flight-api/internal/app/server/dto"
 	"github.com/danielmesquitta/flight-api/internal/domain/errs"
 	"github.com/danielmesquitta/flight-api/internal/domain/usecase/flight"
@@ -39,14 +37,6 @@ func NewFlightHandler(
 // @Failure 500 {object} dto.ErrorResponse
 // @Router /v1/flights/search [get]
 func (h *FlightHandler) Search(c *fiber.Ctx) error {
-	slog.Info("Searching for flights",
-		slog.String("origin", c.Query(QueryParamOrigin)),
-		slog.String("destination", c.Query(QueryParamDestination)),
-		slog.String("date", c.Query(QueryParamDate)),
-		slog.String("sort_by", c.Query(QueryParamSortBy)),
-		slog.String("sort_order", c.Query(QueryParamSortOrder)),
-	)
-
 	origin := c.Query(QueryParamOrigin)
 	destination := c.Query(QueryParamDestination)
 	date, err := parseDateQueryParam(c, QueryParamDate)
