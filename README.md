@@ -111,11 +111,11 @@ make unit-test
 Run integration tests with:
 
 ```sh
-make integration-tests
+make integration-test
 ```
 
 ### Run both unit and integration tests:
 
 ```sh
-make tests
+make test
 ```
